@@ -1,0 +1,36 @@
+{
+    "name": "forms/casperForms",
+    "description": "A fast PHP7 implementation of Html forms",
+    "license": "MIT",
+    "keywords": ["forms", "html", "form-validation", "php"],
+    "homepage": "https://www.linkedin.com/in/gerald-ezeude-b6466865/",
+    "authors": [
+        {
+            "name": "Gerald Ezeude",
+            "email": "geraldsmiles@gmail.com"
+        },
+        {
+            "name": "Gerald Ezeude",
+            "email": "geraldezeude@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-json": "*",
+        "ext-pdo": "*",
+      "ext-mbstring": "*",
+      "ext-iconv": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Casper\\": "src/Casper/",
+            "Core\\": "src/Core/",
+            "Controllers\\": "src/Controllers/",
+            "Modules\\": "src/Modules/",
+            "Libraries\\": "src/Libraries/",
+            "Views\\": "src/Views/",
+            "Templates\\": "src/Views/Templates",
+            "Tests\\": "tests/"
+        }
+    }
+}
