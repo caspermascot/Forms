@@ -7,12 +7,15 @@ namespace Tests;
 use Casper\Exceptions\InvalidButtonTypeException;
 use Casper\Exceptions\ValidationFailedException;
 use Casper\Fields\CharField;
+use Casper\Fields\ChoiceField;
+use Casper\Fields\DateField;
 use Casper\Fields\EmailField;
 use Casper\Fields\Fields;
 use Casper\Fields\IntegerField;
 use Casper\Fields\PasswordField;
 use Casper\Fields\PhoneField;
 use Casper\Fields\SubmitButtonField;
+use Casper\Fields\UrlField;
 use Casper\Forms;
 
 class LoginForm extends Forms
@@ -36,11 +39,23 @@ class LoginForm extends Forms
     /**
      * @var Fields|PhoneField
      */
-    public $phone;
+    public PhoneField $phone;
     /**
      * @var Fields|PasswordField
      */
-    public $password;
+    public PasswordField $password;
+    /**
+     * @var DateField|Fields
+     */
+    public DateField $date;
+    /**
+     * @var Fields|UrlField
+     */
+    public UrlField $url;
+    /**
+     * @var ChoiceField|Fields
+     */
+    public ChoiceField $select;
 
     /**
      * return null
@@ -48,9 +63,9 @@ class LoginForm extends Forms
      */
     protected function build(): void
     {
-        $this->age = $this->fields->integerField()->required(true)->label('ish')->maxValue(450);
+        $this->age = $this->integerField()->label('ish')->maxValue(450)->default(45)->step(4);
         $this->name = $this->fields->charField()->regex("^[a-zA-Z ]*$");
-        $this->email = $this->fields->emailField()->required(true);
+        $this->email = $this->fields->emailField()->required(true)->customErrorMessages('csm');
         $this->url = $this->fields->urlField()->required(true);
         $this->password = $this->fields->passwordField()->required(true)
                             ->mustContainLowerCase(true)
@@ -61,6 +76,7 @@ class LoginForm extends Forms
                             ->maxLength(10);
         $this->phone = $this->fields->phoneField()->internationalFormat(true)->required(true);
         $this->date = $this->fields->dateField()->required(true);
+        $this->select = $this->fields->choiceField()->multiple(true)->choices(['male','female'])->default(['male','female']);
         $this->submit = $this->fields->submitButtonField()->type('submit');
         $this->setUrl('www.google.com');
     }

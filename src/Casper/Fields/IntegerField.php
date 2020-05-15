@@ -15,9 +15,9 @@ class IntegerField extends Fields
      */
     protected int $maxValue;
     /**
-     * @var int
+     * @var float
      */
-    protected int $step;
+    protected float $step;
 
     /**
      * @param int $minValue
@@ -40,10 +40,10 @@ class IntegerField extends Fields
     }
 
     /**
-     * @param int $step
+     * @param float $step
      * @return IntegerField
      */
-    public function step(int $step): self
+    public function step(float $step = 0): self
     {
         $this->step = $step;
         return $this;

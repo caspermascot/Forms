@@ -4,32 +4,97 @@
 namespace Casper\Fields;
 
 
+use Casper\Exceptions\FieldCreateFailedException;
 use Casper\Exceptions\ValidationFailedException;
 use Casper\Validators\Validator;
 use Casper\Validators\ValidatorsInterface;
 
 class Fields extends BaseField
 {
+    /**
+     * @var
+     */
     protected $data;
-    protected $initial;
+    /**
+     * @var
+     */
+    protected $default;
+    /**
+     * @var
+     */
     protected $cleanedData;
+    /**
+     * @var string
+     */
+    protected string $name;
+    /**
+     * @var bool|null
+     */
     protected ?bool $validated;
+    /**
+     * @var bool|null
+     */
     protected ?bool $required = false;
+    /**
+     * @var bool|null
+     */
     protected ?bool $allowNull = true;
+    /**
+     * @var bool|null
+     */
     protected ?bool $allowBlank = true;
+    /**
+     * @var string|null
+     */
     protected ?string $label;
+    /**
+     * @var string|null
+     */
     protected ?string $placeHolder;
+    /**
+     * @var string|null
+     */
     protected ?string $helpText;
+    /**
+     * @var bool|null
+     */
     protected ?bool $disabled;
+    /**
+     * @var bool|null
+     */
     protected ?bool $hidden;
+    /**
+     * @var string|null
+     */
     protected ?string $style;
+    /**
+     * @var bool|null
+     */
     protected ?bool $autoFocus;
+    /**
+     * @var bool|null
+     */
     protected ?bool $autoComplete;
+    /**
+     * @var bool|null
+     */
     protected ?bool $readOnly;
+    /**
+     * @var string|null
+     */
     protected ?string $errorMessage;
+    /**
+     * @var string|null
+     */
     protected ?string $regex;
+    /**
+     * @var ValidatorsInterface|null
+     */
     protected ?ValidatorsInterface $validator;
-    protected ?array $customErrorMessages;
+    /**
+     * @var string
+     */
+    protected string $customErrorMessage;
 
     /**
      * @param $data
@@ -45,9 +110,9 @@ class Fields extends BaseField
      * @param $data
      * @return self
      */
-    public function initial($data): self
+    public function default($data): self
     {
-        $this->initial = $data;
+        $this->default = $data;
         $this->setData($data);
         return $this;
     }
@@ -59,6 +124,16 @@ class Fields extends BaseField
     protected function setCleanedData($data): self
     {
         $this->cleanedData = $data;
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    protected function setName(string $name): self
+    {
+        $this->name = $name;
         return $this;
     }
 
@@ -101,6 +176,7 @@ class Fields extends BaseField
         $this->allowBlank = $allowBlank;
         return $this;
     }
+
     /**
      * @param bool $allowNull
      * @return self
@@ -202,15 +278,18 @@ class Fields extends BaseField
     }
 
     /**
-     * @param array $customErrorMessages
+     * @param string $customErrorMessage
      * @return self
      */
-    public function customErrorMessages(array $customErrorMessages): self
+    public function customErrorMessages(string $customErrorMessage): self
     {
-        $this->customErrorMessages = $customErrorMessages;
+        $this->customErrorMessage = $customErrorMessage;
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     protected function validate(): ?string
     {
         $this->validated = true;
@@ -222,11 +301,21 @@ class Fields extends BaseField
             try{
                  $this->validator->run($this);
 
-            }catch (ValidationFailedException $validationFailedException)
-            {
+            }catch (ValidationFailedException $validationFailedException){
                 return $validationFailedException->getMessage();
             }
         }
         return null;
+    }
+
+    /**
+     * @param string $caller
+     * @throws FieldCreateFailedException
+     */
+    protected function validateFieldCreate(string $caller): void
+    {
+        if(!empty($this->required) and !empty($this->default)){
+            throw new FieldCreateFailedException($this->getProperty('name'), $caller);
+        }
     }
 }

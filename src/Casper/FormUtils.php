@@ -24,4 +24,14 @@ class FormUtils
     {
         return (!empty($array)) and array_keys($array) !== range(0, count($array) - 1);
     }
+
+    /**
+     * @param object $field
+     * @return string
+     */
+    public static function getFieldType(object $field): string
+    {
+        $fieldType = explode("\\", get_class($field));
+        return lcfirst($fieldType[count($fieldType)-1]);
+    }
 }

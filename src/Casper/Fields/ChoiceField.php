@@ -4,31 +4,12 @@
 namespace Casper\Fields;
 
 
-class ChoiceField extends Fields
+class ChoiceField extends RadioField
 {
-    /**
-     * @var array
-     */
-    protected array $choices;
-
     /**
      * @var bool
      */
     protected bool $multiple;
-    /**
-     * @var string
-     */
-    protected string $delimiter='&';
-
-    /**
-     * @param array $choices
-     * @return $this
-     */
-    public function choices(array $choices): self
-    {
-        $this->choices = $choices;
-        return $this;
-    }
 
     /**
      * @param bool $multiple

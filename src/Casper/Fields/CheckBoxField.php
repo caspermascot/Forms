@@ -4,7 +4,7 @@
 namespace Casper\Fields;
 
 
-class CheckBoxField
+class CheckBoxField extends ChoiceField
 {
 
 }

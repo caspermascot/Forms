@@ -9,22 +9,77 @@ use Casper\Exceptions\InvalidMethodException;
 use Casper\Exceptions\InvalidUrlException;
 use Casper\Exceptions\ValidationFailedException;
 use Casper\Fields\BaseField;
+use Casper\Fields\BooleanField;
 use Casper\Fields\ButtonField;
+use Casper\Fields\CharField;
+use Casper\Fields\CheckBoxField;
+use Casper\Fields\ChoiceField;
+use Casper\Fields\DateField;
+use Casper\Fields\DateTimeField;
+use Casper\Fields\EmailField;
 use Casper\Fields\Fields;
 use Casper\Fields\FileField;
+use Casper\Fields\FloatField;
+use Casper\Fields\ImageField;
+use Casper\Fields\IntegerField;
+use Casper\Fields\PasswordField;
+use Casper\Fields\PhoneField;
+use Casper\Fields\RadioField;
+use Casper\Fields\RangeField;
+use Casper\Fields\ResetButtonField;
+use Casper\Fields\SlugField;
+use Casper\Fields\SubmitButtonField;
+use Casper\Fields\TextField;
+use Casper\Fields\TimeField;
+use Casper\Fields\UrlField;
+use Casper\Fields\UuidField;
 use Exception;
 
 abstract class Forms
 {
+    /**
+     * @var array
+     */
     private array $errors;
+    /**
+     * @var array
+     */
     private array $data;
-    private array $initial;
+    /**
+     * @var array
+     */
+    private array $default;
+    /**
+     * @var array
+     */
     private array $cleanedData;
+    /**
+     * @var bool
+     */
     private bool $validated;
+    /**
+     * @var bool
+     */
     private bool $isValid;
+    /**
+     * @var string
+     */
     private string $formUrlPath;
+    /**
+     * @var string
+     */
     private string $method;
+    /**
+     * @var string|null
+     */
     private ?string $style;
+    /**
+     * @var string
+     */
+    private string $formName;
+    /**
+     * @var FormFields
+     */
     protected FormFields $fields;
 
 
@@ -32,6 +87,7 @@ abstract class Forms
      * Form constructor.
      * @throws InvalidMethodException
      * @throws InvalidUrlException
+     * @throws Exceptions\FieldCreateFailedException
      */
     public function __construct()
     {
@@ -47,16 +103,16 @@ abstract class Forms
      * @param array $data
      * @return Forms
      */
-    public function setInitialData(array $data): Forms
+    public function setDefaultData(array $data): Forms
     {
-        $this->initial = $data;
+        $this->default = $data;
         foreach (get_object_vars($this) as $key => $var)
         {
             if($var instanceof Fields)
             {
                 if(array_key_exists($key,$data))
                 {
-                    $var->initial($data[$key]);
+                    $var->default($data[$key]);
                 }
             }
         }
@@ -77,6 +133,7 @@ abstract class Forms
             {
                 if(array_key_exists($key, $data))
                 {
+                    $var->setName($key);
                     $var->setData($data[$key]);
                 }
             }
@@ -127,6 +184,7 @@ abstract class Forms
     /**
      * @throws InvalidMethodException
      * @throws InvalidUrlException
+     * @throws Exceptions\FieldCreateFailedException
      */
     private function validateFormCreate()
     {
@@ -135,6 +193,15 @@ abstract class Forms
 
         if(!isset($this->method))
             throw new InvalidMethodException();
+        $this->formName = FormUtils::getFieldType($this);
+        foreach (get_object_vars($this) as $key => $var)
+        {
+            if($var instanceof Fields)
+            {
+                $var->setName($key);
+                $var->validateFieldCreate($this->formName);
+            }
+        }
     }
 
     /**
@@ -228,14 +295,37 @@ abstract class Forms
         return "<br></form></div>";
     }
 
+    /**
+     *
+     */
     public function asP()
     {
 
     }
 
+    /**
+     *
+     */
     public function asTable()
     {
 
+    }
+
+    /**
+     * @return array
+     */
+    public function asJson()
+    {
+        $response = [];
+        foreach (get_object_vars($this) as $key => $var)
+        {
+            if($var instanceof Fields)
+            {
+                $response[$key] = $var->asJson();
+            }
+        }
+
+        return $response;
     }
 
     /**
@@ -268,7 +358,8 @@ abstract class Forms
                     $this->cleanedData[$key] = $var->getProperty('cleanedData');
                 }
                 else{
-                    $this->errors[$key] = $validationError;
+                    $customErrorMessage = $var->getProperty('customErrorMessage');
+                    $this->errors[$key] = empty($customErrorMessage) ? $validationError : $customErrorMessage;
                 }
             }
         }
@@ -319,5 +410,181 @@ abstract class Forms
         }
 
         return isset($this->errors) ? $this->errors : [];
+    }
+
+    /**
+     * @return BooleanField
+     */
+    public function booleanField(): BooleanField
+    {
+        return new BooleanField();
+    }
+
+    /**
+     * @return CharField
+     */
+    public function charField(): CharField
+    {
+        return new CharField();
+    }
+
+    /**
+     * @return CheckBoxField
+     */
+    public function checkBoxField(): CheckBoxField
+    {
+        return new CheckBoxField();
+    }
+
+    /**
+     * @return ChoiceField
+     */
+    public function choiceField(): ChoiceField
+    {
+        return new ChoiceField();
+    }
+
+    /**
+     * @return DateField
+     */
+    public function dateField(): DateField
+    {
+        return new DateField();
+    }
+
+    /**
+     * @return DateTimeField
+     */
+    public function dateTimeField(): DateTimeField
+    {
+        return new DateTimeField();
+    }
+
+    /**
+     * @return EmailField
+     */
+    public function emailField(): EmailField
+    {
+        return new EmailField();
+    }
+
+    /**
+     * @return FileField
+     */
+    public function fileField(): FileField
+    {
+        return new FileField();
+    }
+
+    /**
+     * @return FloatField
+     */
+    public function floatField(): FloatField
+    {
+        return new FloatField();
+    }
+
+    /**
+     * @return ImageField
+     */
+    public function imageField(): ImageField
+    {
+        return new ImageField();
+    }
+
+    /**
+     * @return IntegerField
+     */
+    public function integerField(): IntegerField
+    {
+        return new IntegerField();
+    }
+
+    /**
+     * @return PasswordField
+     */
+    public function passwordField(): PasswordField
+    {
+        return new PasswordField();
+    }
+
+    /**
+     * @return PhoneField
+     */
+    public function phoneField(): PhoneField
+    {
+        return new PhoneField();
+    }
+
+    /**
+     * @return RadioField
+     */
+    public function radioField(): RadioField
+    {
+        return new RadioField();
+    }
+
+    /**
+     * @return RangeField
+     */
+    public function rangeField(): RangeField
+    {
+        return new RangeField();
+    }
+
+    /**
+     * @return SlugField
+     */
+    public function slugField(): SlugField
+    {
+        return new SlugField();
+    }
+
+    /**
+     * @return TextField
+     */
+    public function textField(): TextField
+    {
+        return new TextField();
+    }
+
+    /**
+     * @return TimeField
+     */
+    public function timeField(): TimeField
+    {
+        return new TimeField();
+    }
+
+    /**
+     * @return UuidField
+     */
+    public function uuidField(): UuidField
+    {
+        return new UuidField();
+    }
+
+    /**
+     * @return SubmitButtonField
+     */
+    public function submitButtonField(): SubmitButtonField
+    {
+        return new SubmitButtonField();
+    }
+
+    /**
+     * @return ResetButtonField
+     */
+    public function resetButtonField(): ResetButtonField
+    {
+        return new ResetButtonField();
+    }
+
+    /**
+     * @return UrlField
+     */
+    public function urlField(): UrlField
+    {
+        return new UrlField();
     }
 }

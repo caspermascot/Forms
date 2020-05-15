@@ -27,6 +27,7 @@ use Casper\Fields\TimeField;
 use Casper\Fields\UrlField;
 use Casper\Fields\UuidField;
 use Casper\FormUtils;
+use Exception;
 
 class Validator implements ValidatorsInterface
 {
@@ -61,7 +62,7 @@ class Validator implements ValidatorsInterface
         }
 
         if(empty($this->data)){
-            if($field->getProperty('allowBlank') == false){
+            if($field->getProperty('allowBlank') === false){
                 throw new ValidationFailedException(self::allowBlankErrorMessage);
             }
         }
@@ -79,11 +80,10 @@ class Validator implements ValidatorsInterface
 
         if(empty($this->data)){
             $field->setCleanedData($this->data);
-            return null;
+            return $field;
         }
 
-        $fieldType = explode("\\", get_class($field));
-        $fieldType = lcfirst($fieldType[count($fieldType)-1]);
+        $fieldType = FormUtils::getFieldType($field);
 
         return (method_exists($this, $fieldType)) ? call_user_func_array([$this, $fieldType], [$field]) : $field ;
     }
@@ -95,6 +95,17 @@ class Validator implements ValidatorsInterface
     private function getData(Fields $field)
     {
         $data = $field->getProperty('data');
+        if(empty($data))
+        {
+            // perhaps look in $_FILES
+            if(($field instanceof FileField or $field instanceof ImageField)){
+                $name = $field->getProperty('name');
+                try{
+                    $data = $_FILES[$name];
+                }
+                catch (Exception $exception){}
+            }
+        }
         return $data;
     }
 
@@ -130,34 +141,44 @@ class Validator implements ValidatorsInterface
     /**
      * @param CheckBoxField $field
      * @return CheckBoxField
+     * @throws ValidationFailedException
      */
     private function checkBoxField(CheckBoxField $field): CheckBoxField
     {
+        $field->setCleanedData($this->validateChoiceOptions($field));
         return $field;
     }
 
     /**
      * @param ChoiceField $field
      * @return ChoiceField
+     * @throws ValidationFailedException
      */
     private function choiceField(ChoiceField $field): ChoiceField
     {
-        $choices = $field->getProperty('choices');
-        if(isset($choices)){
-            $delimiter = $field->getProperty('delimiter');
-            $delimiter = !empty($delimiter) ?: '&';
-            $choiceData = explode($delimiter, $this->data);
-            if(FormUtils::isMultiDimensional($choices)){
-                foreach ($choiceData as $key => $value){
+        $field->setCleanedData($this->validateChoiceOptions($field));
+        return $field;
+    }
 
+    /**
+     * @param Fields $field
+     * @return string|null
+     * @throws ValidationFailedException
+     */
+    private function validateChoiceOptions(Fields $field): ?string
+    {
+        $choices = $field->getProperty('choices');
+        $choiceOptions = is_array($this->data) ? $this->data : explode(',',$this->data);
+
+        if(isset($choices)){
+            foreach ($choiceOptions as $key => $value){
+                if(!in_array($value, $choices)){
+                    throw new ValidationFailedException("{$value} is not a valid option for this field");
                 }
             }
-            else
-            {
-
-            }
         }
-        return $field;
+
+        return implode(',',$choiceOptions);
     }
 
     /**
@@ -208,10 +229,48 @@ class Validator implements ValidatorsInterface
     /**
      * @param FileField $field
      * @return FileField
+     * @throws ValidationFailedException
      */
     private function fileField(FileField $field): FileField
     {
+        $this->validateFileProperties($field);
+        $field->setCleanedData($this->data);
         return $field;
+    }
+
+    /**
+     * @param FileField $field
+     * @throws ValidationFailedException
+     */
+    private function validateFileProperties(FileField $field): void
+    {
+        $minSize = $field->getProperty('minSize');
+        if(isset($minSize)){
+            if($this->data["size"] < $minSize){
+                throw new ValidationFailedException("Size cannot be less than {$minSize}");
+            }
+        }
+
+        $maxSize = $field->getProperty('maxSize');
+        if(isset($maxSize)){
+            if($this->data["size"] > $maxSize){
+                throw new ValidationFailedException("Size cannot be greater than {$maxSize}");
+            }
+        }
+
+        $type = $field->getProperty('type');
+        if(isset($type)){
+            $dir = "uploads/";
+            $target_file = $dir . basename($this->data["name"]);
+            $fileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+            $type = array_values($type);
+            if(!in_array(strtolower($fileType), $type)){
+                throw new ValidationFailedException("Unsupported type given. Must be one of ( ".implode($type)." )");
+            }
+        }
+
+
     }
 
     /**
@@ -235,9 +294,17 @@ class Validator implements ValidatorsInterface
     /**
      * @param ImageField $field
      * @return ImageField
+     * @throws ValidationFailedException
      */
     private function imageField(ImageField $field): ImageField
     {
+        $check = getimagesize($this->data["tmp_name"]);
+        if($check == false) {
+            throw new ValidationFailedException('File is not an image');
+        }
+
+        $this->validateFileProperties($field);
+        $field->setCleanedData($this->data);
         return $field;
     }
 
@@ -264,7 +331,7 @@ class Validator implements ValidatorsInterface
      * @param $data
      * @throws ValidationFailedException
      */
-    private function checkMinValue($minValue, $data)
+    private function checkMinValue($minValue, $data): void
     {
         if(isset($minValue)){
             if($data < $minValue){
@@ -278,7 +345,7 @@ class Validator implements ValidatorsInterface
      * @param $data
      * @throws ValidationFailedException
      */
-    private function checkMaxValue($maxValue, $data)
+    private function checkMaxValue($maxValue, $data): void
     {
         if(isset($maxValue)) {
             if ($data > $maxValue) {
@@ -292,7 +359,7 @@ class Validator implements ValidatorsInterface
      * @param $data
      * @throws ValidationFailedException
      */
-    private function checkMinLength($minLength, $data)
+    private function checkMinLength($minLength, $data): void
     {
         if(isset($minLength)){
             if(strlen($data) < $minLength){
@@ -306,7 +373,7 @@ class Validator implements ValidatorsInterface
      * @param $data
      * @throws ValidationFailedException
      */
-    private function checkMaxLength($maxLength, $data)
+    private function checkMaxLength($maxLength, $data): void
     {
         if(isset($maxLength)){
             if(strlen($data) > $maxLength){
@@ -384,9 +451,11 @@ class Validator implements ValidatorsInterface
     /**
      * @param RadioField $field
      * @return RadioField
+     * @throws ValidationFailedException
      */
     private function radioField(RadioField $field): RadioField
     {
+        $field->setCleanedData($this->validateChoiceOptions($field));
         return $field;
     }
 

@@ -4,6 +4,8 @@
 namespace Casper\Fields;
 
 
+use Casper\FormUtils;
+
 class BaseField
 {
 
@@ -67,5 +69,13 @@ class BaseField
     {
         $this->style = $style;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function asJson()
+    {
+        return FormUtils::getFieldType($this);
     }
 }

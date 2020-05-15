@@ -8,7 +8,13 @@ use Casper\Exceptions\InvalidButtonTypeException;
 
 class ButtonField extends BaseField
 {
+    /**
+     * @var string
+     */
     protected string $type = 'submit';
+    /**
+     * @var string
+     */
     protected string $style;
 
     /**
