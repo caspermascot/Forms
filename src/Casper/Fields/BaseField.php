@@ -4,11 +4,21 @@
 namespace Casper\Fields;
 
 
+use Casper\Exceptions\FieldCreateFailedException;
 use Casper\FormUtils;
 
 class BaseField
 {
+    const MESSAGE = 'Cannot set required to true when a default is provided, On field %s of form %s ';
 
+    /**
+     * @var string|null
+     */
+    protected ?string $label;
+    /**
+     * @var string
+     */
+    protected string $name;
     /**
      * @param $name
      * @param $arguments
@@ -40,7 +50,7 @@ class BaseField
      */
     protected function asHtml(string $name): string
     {
-        return " {$name} ";
+        return " <div class='{$this->getProperty('style')}'> <br> <span> htmlLabel htmlField </span> </div> ";
     }
 
     /**
@@ -70,12 +80,55 @@ class BaseField
         $this->style = $style;
         return $this;
     }
+    /**
+     * @param string $label
+     * @return self
+     */
+    public function label(string $label): self
+    {
+        $this->label = $label;
+        return $this;
+    }
 
     /**
-     * @return string
+     * @param string $name
+     * @return $this
      */
-    public function asJson()
+    protected function setName(string $name): self
     {
-        return FormUtils::getFieldType($this);
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function asJson(): array
+    {
+        return [
+            'type' => FormUtils::getFieldType($this),
+            'label' => $this->getProperty('label'),
+            'name' => $this->getProperty('name'),
+            'style' => $this->getProperty('style')
+        ];
+    }
+
+    /**
+     * @param string $caller
+     * @throws FieldCreateFailedException
+     */
+    protected function validateFieldCreate(string $caller): void
+    {
+        $name = $this->getProperty('name');
+
+        if($this instanceof Fields){
+            if(!empty($this->required) and !empty($this->default)){
+                throw new FieldCreateFailedException(sprintf(self::MESSAGE, $name, $caller));
+            }
+        }
+
+        if(empty($this->getProperty('label'))){
+            $this->label = $name;
+        }
     }
 }

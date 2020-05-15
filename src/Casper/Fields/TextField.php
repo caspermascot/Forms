@@ -6,10 +6,14 @@ namespace Casper\Fields;
 
 class TextField extends Fields
 {
-
+    /**
+     * @var int
+     */
     protected int $cols;
+    /**
+     * @var int
+     */
     protected int $rows;
-
 
     /**
      * @param int $cols
@@ -29,5 +33,16 @@ class TextField extends Fields
     {
         $this->rows = $rows;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function asJson(): array
+    {
+        $res = parent::asJson();
+        $res['cols'] = $this->getProperty('cols');
+        $res['rows'] = $this->getProperty('rows');
+        return $res;
     }
 }

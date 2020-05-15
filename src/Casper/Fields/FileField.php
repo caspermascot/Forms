@@ -49,5 +49,27 @@ class FileField extends Fields
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function asJson(): array
+    {
+        $res = parent::asJson();
+        $res['minSize'] = $this->getProperty('minSize');
+        $res['maxSize'] = $this->getProperty('maxSize');
+        $res['type']    = $this->getProperty('type');
+        return $res;
+    }
 
+    /**
+     * @param string $name
+     * @return string
+     */
+    protected function asHtml(string $name): string
+    {
+        $replacement = "type='file' ";
+        $res = parent::asHtml($name);
+        $res = str_replace("type='text'", $replacement, $res);
+        return $res;
+    }
 }

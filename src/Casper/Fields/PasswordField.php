@@ -6,9 +6,21 @@ namespace Casper\Fields;
 
 class PasswordField extends CharField
 {
+    /**
+     * @var bool
+     */
     protected bool $upper;
+    /**
+     * @var bool
+     */
     protected bool $lower;
+    /**
+     * @var bool
+     */
     protected bool $number;
+    /**
+     * @var bool
+     */
     protected bool $symbol;
 
     /**
@@ -51,4 +63,28 @@ class PasswordField extends CharField
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function asJson(): array
+    {
+        $res = parent::asJson();
+        $res['upper'] = $this->getProperty('upper');
+        $res['lower'] = $this->getProperty('lower');
+        $res['symbol'] = $this->getProperty('symbol');
+        $res['number'] = $this->getProperty('number');
+
+        return $res;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    protected function asHtml(string $name): string
+    {
+        $res = parent::asHtml($name);
+        $res = str_replace("type='text'", "type='password'", $res);
+        return $res;
+    }
 }

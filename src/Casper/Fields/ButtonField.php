@@ -30,4 +30,29 @@ class ButtonField extends BaseField
         $this->type = $type;
         return $this;
     }
+
+    /**
+     * @param string $name
+     * @param bool $modify
+     * @return string
+     */
+    protected function asHtml(string $name, bool $modify = true): string
+    {
+        $res = parent::asHtml($name);
+        $res = str_replace('htmlLabel', '', $res);
+        $field = " <br> <input class='{$this->getProperty('style')}' type='{$this->getProperty('type')}' value='{$this->getProperty('label')}'> ";
+        $res = str_replace('htmlField', $field, $res);
+        return $res;
+    }
+
+    /**
+     * @return array
+     */
+    public function asJson(): array
+    {
+        $res = parent::asJson();
+        $res['type'] = $this->getProperty('type');
+
+        return $res;
+    }
 }

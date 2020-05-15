@@ -4,7 +4,6 @@
 namespace Casper\Fields;
 
 
-use Casper\Exceptions\FieldCreateFailedException;
 use Casper\Exceptions\ValidationFailedException;
 use Casper\Validators\Validator;
 use Casper\Validators\ValidatorsInterface;
@@ -24,17 +23,13 @@ class Fields extends BaseField
      */
     protected $cleanedData;
     /**
-     * @var string
-     */
-    protected string $name;
-    /**
      * @var bool|null
      */
     protected ?bool $validated;
     /**
      * @var bool|null
      */
-    protected ?bool $required = false;
+    protected ?bool $required = true;
     /**
      * @var bool|null
      */
@@ -43,10 +38,6 @@ class Fields extends BaseField
      * @var bool|null
      */
     protected ?bool $allowBlank = true;
-    /**
-     * @var string|null
-     */
-    protected ?string $label;
     /**
      * @var string|null
      */
@@ -128,16 +119,6 @@ class Fields extends BaseField
     }
 
     /**
-     * @param string $name
-     * @return $this
-     */
-    protected function setName(string $name): self
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
      * @param $message
      * @return $this
      */
@@ -194,16 +175,6 @@ class Fields extends BaseField
     public function helpText(string $helpText): self
     {
         $this->helpText = $helpText;
-        return $this;
-    }
-
-    /**
-     * @param string $label
-     * @return self
-     */
-    public function label(string $label): self
-    {
-        $this->label = $label;
         return $this;
     }
 
@@ -300,7 +271,6 @@ class Fields extends BaseField
         if($this->validator instanceof ValidatorsInterface){
             try{
                  $this->validator->run($this);
-
             }catch (ValidationFailedException $validationFailedException){
                 return $validationFailedException->getMessage();
             }
@@ -309,13 +279,94 @@ class Fields extends BaseField
     }
 
     /**
-     * @param string $caller
-     * @throws FieldCreateFailedException
+     * @param string $name
+     * @return string
      */
-    protected function validateFieldCreate(string $caller): void
+    protected function asHtml(string $name): string
     {
-        if(!empty($this->required) and !empty($this->default)){
-            throw new FieldCreateFailedException($this->getProperty('name'), $caller);
+        $res = parent::asHtml($name);
+        $label = ucfirst($this->getProperty('label'));
+        $res = str_replace('htmlLabel', "<label class='{$this->getProperty('style')}' for='{$name}'>{$label}</label> <br> ", $res);
+
+        $flag = true;
+        if($this instanceof Choices){
+            $flag = false;
         }
+
+        if($flag){
+            $fieldHtml = $this->getFieldHtml();
+            $field = "<input type='text' {$fieldHtml}/>";
+            $res = str_replace('htmlField', $field, $res);
+        }
+        return $res;
+    }
+
+    /**
+     * @return array
+     */
+    public function asJson(): array
+    {
+        $res = parent::asJson();
+        $res['required'] = !empty($this->getProperty('required'));
+        $res['allowNull'] = !empty($this->getProperty('allowNull'));
+        $res['allowBlank'] = !empty($this->getProperty('allowBlank'));
+        $res['hidden'] = !empty($this->getProperty('hidden'));
+        $res['disabled'] = !empty($this->getProperty('disabled'));
+        $res['autoComplete'] = !empty($this->getProperty('autoComplete'));
+        $res['autoFocus'] = !empty($this->getProperty('autoFocus'));
+        $res['regex'] = $this->getProperty('regex');
+        $res['default'] = $this->getProperty('default');
+        $res['helpText'] = $this->getProperty('helpText');
+        $res['placeHolder'] = $this->getProperty('PlaceHolder');
+
+        return $res;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getFieldHtml(): string
+    {
+        $res = " class='{$this->getProperty('style')}' ";
+        if(!empty($this->required)){
+            $res .= 'required="true" ';
+        }
+
+        if(!empty($this->autoComplete)){
+            $res .= 'autocomplete="on" ';
+        }
+
+        if(!empty($this->disabled)){
+            $res .= 'disabled="true" ';
+        }
+
+        if(!empty($this->readOnly)){
+            $res .= 'readonly="true" ';
+        }
+
+        if(!empty($this->autoFocus)){
+            $res .= 'autofocus="true" ';
+        }
+
+        if(!empty($this->data)){
+            if(!is_array($this->data)){
+                $res .= "value='{$this->data}' ";
+            }
+        }
+
+        if(!empty($this->placeHolder)){
+            $res .= "placeholder='{$this->placeHolder}' ";
+        }
+
+        if(!empty($this->regex)){
+            $res .= "pattern='{$this->regex}' ";
+        }
+
+        if(!empty($this->name)){
+            $res .= " name='{$this->name}' ";
+            $res .= " id='id_{$this->name}' ";
+        }
+
+        return $res;
     }
 }

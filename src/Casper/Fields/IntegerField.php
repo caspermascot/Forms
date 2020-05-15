@@ -49,6 +49,39 @@ class IntegerField extends Fields
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function asJson(): array
+    {
+        $res = parent::asJson();
+        $res['minValue'] = $this->getProperty('minValue');
+        $res['maxValue'] = $this->getProperty('maxValue');
+        $res['step'] = $this->getProperty('step');
+        return $res;
+    }
+    /**
+     * @param string $name
+     * @return string
+     */
+    protected function asHtml(string $name): string
+    {
+        $replacement = "type='number' ";
+        if(!empty($this->minValue)){
+            $replacement .= "min='{$this->minValue}' ";
+        }
 
+        if(!empty($this->maxLength)){
+            $replacement .= "max='{$this->maxValue}' ";
+        }
+
+        if(!empty($this->step)){
+            $replacement .= "step='{$this->step}' ";
+        }
+
+        $res = parent::asHtml($name);
+        $res = str_replace("type='text'", $replacement, $res);
+        return $res;
+    }
 
 }

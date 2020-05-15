@@ -192,8 +192,31 @@ class Validator implements ValidatorsInterface
             throw new ValidationFailedException('Invalid date Value');
         }
 
+        $this->validateDate($field);
+
         $field->setCleanedData(date('Y-m-d', strtotime($this->data)));
         return $field;
+    }
+
+    /**
+     * @param DateField $field
+     * @throws ValidationFailedException
+     */
+    private function validateDate(DateField $field): void
+    {
+        $minValue = $field->getProperty('minValue');
+        if(isset($minValue)){
+            if(strtotime($this->data) < strtotime($minValue)){
+                throw new ValidationFailedException("Date cannot be less than {$minValue}");
+            }
+        }
+
+        $maxValue = $field->getProperty('maxValue');
+        if(isset($maxValue)){
+            if(strtotime($this->data) > strtotime($minValue)){
+                throw new ValidationFailedException("Date cannot be greater than {$minValue}");
+            }
+        }
     }
 
     /**
@@ -206,6 +229,8 @@ class Validator implements ValidatorsInterface
         if(empty(strtotime($this->data))){
             throw new ValidationFailedException('Invalid date Value');
         }
+
+        $this->validateDate($field);
 
         $field->setCleanedData(date('c', strtotime($this->data)));
         return $field;
@@ -515,6 +540,12 @@ class Validator implements ValidatorsInterface
         if (!preg_match("/^([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/i", $this->data)) {
             throw new ValidationFailedException('Invalid time given.');
         }
+
+        if (empty(strtotime($this->data))) {
+            throw new ValidationFailedException('Invalid time given.');
+        }
+
+        $this->validateDate($field);
 
         $field->setCleanedData($this->data);
         return $field;

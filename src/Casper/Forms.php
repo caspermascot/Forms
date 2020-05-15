@@ -196,7 +196,7 @@ abstract class Forms
         $this->formName = FormUtils::getFieldType($this);
         foreach (get_object_vars($this) as $key => $var)
         {
-            if($var instanceof Fields)
+            if($var instanceof BaseField)
             {
                 $var->setName($key);
                 $var->validateFieldCreate($this->formName);
@@ -245,9 +245,9 @@ abstract class Forms
     {
         if($hasFile === true )
         {
-            return "<div class='{$this->getStyle()}'><br><form action='{$this->getUrl()}' method='{$this->getMethod()}' enctype='multipart/form-data' >";
+            return "<div class='{$this->getStyle()}'><form class='{$this->getStyle()}' name='{$this->formName}' id='id_{$this->formName}' action='{$this->getUrl()}' method='{$this->getMethod()}' enctype='multipart/form-data' >";
         }
-        return "<div class='{$this->getStyle()}'><br><form action='{$this->getUrl()}' method='{$this->getMethod()}' >";
+        return "<div class='{$this->getStyle()}'><form class='{$this->getStyle()}' name='{$this->formName}' id='id_{$this->formName}' action='{$this->getUrl()}' method='{$this->getMethod()}' >";
     }
 
     /**
@@ -260,25 +260,27 @@ abstract class Forms
             'hasSubmit' => false,
             'htmlBody' => ''
         ];
+        $tail = '';
 
-        foreach (get_object_vars($this) as $key => $var)
-        {
-            if($var instanceof BaseField)
-            {
-                if($var instanceof ButtonField)
-                {
-                    $response->hasSubmit = true;
+        foreach (get_object_vars($this) as $key => $var){
+            if($var instanceof BaseField){
+                if($var instanceof ButtonField){
+                    $tail .= $var->asHtml($key);
+                    if($var instanceof SubmitButtonField){
+                        $response->hasSubmit = true;
+                    }
+                }
+                else{
+                    $response->htmlBody .= $var->asHtml($key);
                 }
 
-                if($var instanceof FileField)
-                {
+                if($var instanceof FileField){
                     $response->hasFile = true;
                 }
-
-                $response->htmlBody .= $var->asHtml($key);
             }
         }
 
+        $response->htmlBody .= $tail;
         return $response;
     }
 
@@ -288,11 +290,10 @@ abstract class Forms
      */
     private function getHtmlBase(bool $hasSubmit = false)
     {
-        if($hasSubmit === true)
-        {
-            return "<br><div><input type='submit' value='Submit'></div><br></form></div>";
+        if($hasSubmit === true){
+            return "</form></div>";
         }
-        return "<br></form></div>";
+        return "<div> <span><input type='submit' value='Submit'></span></div><br></form></div>";
     }
 
     /**
@@ -319,7 +320,7 @@ abstract class Forms
         $response = [];
         foreach (get_object_vars($this) as $key => $var)
         {
-            if($var instanceof Fields)
+            if($var instanceof BaseField)
             {
                 $response[$key] = $var->asJson();
             }
@@ -373,7 +374,6 @@ abstract class Forms
             $this->isValid = false;
             $this->cleanedData = [];
         }
-
     }
 
     /**

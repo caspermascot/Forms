@@ -4,20 +4,34 @@
 namespace Casper\Fields;
 
 
-class RadioField extends Fields
+use Casper\FormUtils;
+
+class RadioField extends Choices
 {
     /**
-     * @var array
+     * @param string $name
+     * @return string
      */
-    protected array $choices;
-
-    /**
-     * @param array $choices
-     * @return $this
-     */
-    public function choices(array $choices): self
+    protected function asHtml(string $name): string
     {
-        $this->choices = $choices;
-        return $this;
+        $res = parent::asHtml($name);
+        $field = '';
+        $data = $this->getChoiceDefault();
+        $count = 0;
+        if(FormUtils::isMultiDimensional($this->choices)){
+            foreach ($this->choices as $key => $choice){
+                $label = ucfirst($key);
+                $field.= $this->getChoiceHtmlData($this, $data, $count, $label, $choice, $key);
+                $count+=1;
+            }
+        }else{
+            foreach ($this->choices as $key => $choice){
+                $label = ucfirst($choice);
+                $field.= $this->getChoiceHtmlData($this, $data, $count, $label, $choice, null);
+                $count+=1;
+            }
+        }
+        $res = str_replace('htmlField', $field, $res);
+        return $res;
     }
 }
