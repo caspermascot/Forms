@@ -10,16 +10,20 @@ use Casper\Exceptions\InvalidUrlException;
 use Casper\Exceptions\ValidationFailedException;
 use Casper\Fields\BaseField;
 use Casper\Fields\BooleanField;
+use Casper\Fields\BaseButtonField;
 use Casper\Fields\ButtonField;
 use Casper\Fields\CharField;
 use Casper\Fields\CheckBoxField;
 use Casper\Fields\ChoiceField;
+use Casper\Fields\ColorField;
+use Casper\Fields\DataListField;
 use Casper\Fields\DateField;
 use Casper\Fields\DateTimeField;
 use Casper\Fields\EmailField;
 use Casper\Fields\Fields;
 use Casper\Fields\FileField;
 use Casper\Fields\FloatField;
+use Casper\Fields\HiddenField;
 use Casper\Fields\ImageField;
 use Casper\Fields\IntegerField;
 use Casper\Fields\PasswordField;
@@ -151,12 +155,13 @@ abstract class Forms
     }
 
     /**
+     * add form fields, set method and url
      * return null
      */
     abstract protected function build(): void;
 
     /**
-     * @param string $formUrlPath
+     * @param string $url
      */
     protected function setUrl(string $url): void
     {
@@ -260,11 +265,11 @@ abstract class Forms
             'hasSubmit' => false,
             'htmlBody' => ''
         ];
-        $tail = '';
+        $tail = '<br>';
 
         foreach (get_object_vars($this) as $key => $var){
             if($var instanceof BaseField){
-                if($var instanceof ButtonField){
+                if($var instanceof BaseButtonField){
                     $tail .= $var->asHtml($key);
                     if($var instanceof SubmitButtonField){
                         $response->hasSubmit = true;
@@ -294,22 +299,6 @@ abstract class Forms
             return "</form></div>";
         }
         return "<div> <span><input type='submit' value='Submit'></span></div><br></form></div>";
-    }
-
-    /**
-     *
-     */
-    public function asP()
-    {
-
-    }
-
-    /**
-     *
-     */
-    public function asTable()
-    {
-
     }
 
     /**
@@ -382,7 +371,10 @@ abstract class Forms
      */
     public function isValid(): bool
     {
-        $this->validate();
+        if(empty($this->validated)){
+            $this->validate();
+        }
+
         return $this->isValid;
     }
 
@@ -421,6 +413,14 @@ abstract class Forms
     }
 
     /**
+     * @return ButtonField
+     */
+    public function buttonField(): ButtonField
+    {
+        return new ButtonField();
+    }
+
+    /**
      * @return CharField
      */
     public function charField(): CharField
@@ -442,6 +442,22 @@ abstract class Forms
     public function choiceField(): ChoiceField
     {
         return new ChoiceField();
+    }
+
+    /**
+     * @return ColorField
+     */
+    public function colorField(): ColorField
+    {
+        return new ColorField();
+    }
+
+    /**
+     * @return DataListField
+     */
+    public function dataListField(): DataListField
+    {
+        return new DataListField();
     }
 
     /**
@@ -482,6 +498,14 @@ abstract class Forms
     public function floatField(): FloatField
     {
         return new FloatField();
+    }
+
+    /**
+     * @return HiddenField
+     */
+    public function hiddenField(): HiddenField
+    {
+        return new HiddenField();
     }
 
     /**

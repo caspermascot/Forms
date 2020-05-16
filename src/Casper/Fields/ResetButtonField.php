@@ -4,7 +4,11 @@
 namespace Casper\Fields;
 
 
-class ResetButtonField extends ButtonField
+class ResetButtonField extends BaseButtonField
 {
 
+    public function __construct()
+    {
+        $this->type = 'reset';
+    }
 }

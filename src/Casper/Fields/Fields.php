@@ -29,7 +29,7 @@ class Fields extends BaseField
     /**
      * @var bool|null
      */
-    protected ?bool $required = true;
+    protected ?bool $required = false;
     /**
      * @var bool|null
      */
@@ -86,6 +86,10 @@ class Fields extends BaseField
      * @var string
      */
     protected string $customErrorMessage;
+    /**
+     * @var bool
+     */
+    protected bool $isValid;
 
     /**
      * @param $data
@@ -271,7 +275,9 @@ class Fields extends BaseField
         if($this->validator instanceof ValidatorsInterface){
             try{
                  $this->validator->run($this);
+                 $this->isValid = true;
             }catch (ValidationFailedException $validationFailedException){
+                $this->isValid = false;
                 return $validationFailedException->getMessage();
             }
         }
@@ -282,14 +288,26 @@ class Fields extends BaseField
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name): string
+    protected function asHtml(string $name=''): string
     {
         $res = parent::asHtml($name);
         $label = ucfirst($this->getProperty('label'));
         $res = str_replace('htmlLabel', "<label class='{$this->getProperty('style')}' for='{$name}'>{$label}</label> <br> ", $res);
 
+        if(!empty($this->getProperty('helpText')))
+        {
+            if($this->getProperty('isValid') == false){
+                $res = str_replace('helpText', "<br><span class=''>{$this->getProperty('helpText')}</span>", $res);
+            }
+            else{
+                $res = str_replace('helpText', '', $res);
+            }
+        }else{
+            $res = str_replace('helpText', '', $res);
+        }
+
         $flag = true;
-        if($this instanceof Choices){
+        if($this instanceof Choices or $this instanceof TextField){
             $flag = false;
         }
 

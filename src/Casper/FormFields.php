@@ -8,11 +8,14 @@ use Casper\Fields\BooleanField;
 use Casper\Fields\CharField;
 use Casper\Fields\CheckBoxField;
 use Casper\Fields\ChoiceField;
+use Casper\Fields\ColorField;
+use Casper\Fields\DataListField;
 use Casper\Fields\DateField;
 use Casper\Fields\DateTimeField;
 use Casper\Fields\EmailField;
 use Casper\Fields\FileField;
 use Casper\Fields\FloatField;
+use Casper\Fields\HiddenField;
 use Casper\Fields\ImageField;
 use Casper\Fields\IntegerField;
 use Casper\Fields\PasswordField;
@@ -62,6 +65,22 @@ class FormFields implements FormFieldsInterface
     }
 
     /**
+     * @return ColorField
+     */
+    public function colorField(): ColorField
+    {
+        return new ColorField();
+    }
+
+    /**
+     * @return DataListField
+     */
+    public function dataListField(): DataListField
+    {
+        return new DataListField();
+    }
+
+    /**
      * @return DateField
      */
     public function dateField(): DateField
@@ -99,6 +118,14 @@ class FormFields implements FormFieldsInterface
     public function floatField(): FloatField
     {
         return new FloatField();
+    }
+
+    /**
+     * @return HiddenField
+     */
+    public function hiddenField(): HiddenField
+    {
+        return new HiddenField();
     }
 
     /**

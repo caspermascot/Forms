@@ -18,6 +18,10 @@ class FileField extends Fields
      * @var array
      */
     protected array $type;
+    /**
+     * @var string
+     */
+    protected string $src;
 
     /**
      * @param int $minSize
@@ -50,6 +54,16 @@ class FileField extends Fields
     }
 
     /**
+     * @param string $src
+     * @return $this
+     */
+    public function src(string $src): self
+    {
+        $this->src = $src;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function asJson(): array
@@ -65,9 +79,13 @@ class FileField extends Fields
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name): string
+    protected function asHtml(string $name=''): string
     {
         $replacement = "type='file' ";
+        if(!empty($this->src)){
+            $replacement .= "src='{$this->src}' ";
+        }
+
         $res = parent::asHtml($name);
         $res = str_replace("type='text'", $replacement, $res);
         return $res;

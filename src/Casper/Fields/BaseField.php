@@ -48,27 +48,12 @@ class BaseField
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name): string
+    protected function asHtml(string $name = ''): string
     {
-        return " <div class='{$this->getProperty('style')}'> <br> <span> htmlLabel htmlField </span> </div> ";
-    }
-
-    /**
-     * @param string $name
-     * @return string
-     */
-    protected function asTable(string $name): string
-    {
-        return " {$name} ";
-    }
-
-    /**
-     * @param string $name
-     * @return string
-     */
-    protected function asP(string $name): string
-    {
-        return " {$name} ";
+        if(empty($name)){
+            $name = $this->getProperty('name');
+        }
+        return " <div class='{$this->getProperty('style')}'> <br> <span> htmlLabel htmlField helpText </span> </div> ";
     }
 
     /**

@@ -36,12 +36,12 @@ class ChoiceField extends Choices
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name): string
+    protected function asHtml(string $name=''): string
     {
         $res = parent::getParentHtml($name);
         $fieldHtml = $this->getFieldHtml();
         $field = "<select {$fieldHtml} ";
-        $field .= empty($this->multiple) ? '' : 'multiple';
+        $field .= empty($this->multiple) ? '' : 'multiple="true" ';
         $field .= " >";
 
         $data = $this->getChoiceDefault();
@@ -72,7 +72,7 @@ class ChoiceField extends Choices
      * @param string $name
      * @return string
      */
-    public function getParentHtml(string $name): string
+    public function getParentHtml(string $name=''): string
     {
         return parent::asHtml($name);
     }

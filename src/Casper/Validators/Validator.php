@@ -9,12 +9,15 @@ use Casper\Fields\BooleanField;
 use Casper\Fields\CharField;
 use Casper\Fields\CheckBoxField;
 use Casper\Fields\ChoiceField;
+use Casper\Fields\ColorField;
+use Casper\Fields\DataListField;
 use Casper\Fields\DateField;
 use Casper\Fields\DateTimeField;
 use Casper\Fields\EmailField;
 use Casper\Fields\Fields;
 use Casper\Fields\FileField;
 use Casper\Fields\FloatField;
+use Casper\Fields\HiddenField;
 use Casper\Fields\ImageField;
 use Casper\Fields\IntegerField;
 use Casper\Fields\PasswordField;
@@ -32,11 +35,15 @@ use Exception;
 class Validator implements ValidatorsInterface
 {
 
+
     private const requiredErrorMessage = 'This field is required';
     private const allowNullErrorMessage = 'This field cannot be null';
     private const allowBlankErrorMessage = 'This field cannot be empty';
     private const regexErrorMessage = "The given value does not match the pattern %s ";
 
+    /**
+     * @var
+     */
     private $data;
 
     /**
@@ -100,10 +107,9 @@ class Validator implements ValidatorsInterface
             // perhaps look in $_FILES
             if(($field instanceof FileField or $field instanceof ImageField)){
                 $name = $field->getProperty('name');
-                try{
+                if(!empty($_FILES[$name])){
                     $data = $_FILES[$name];
                 }
-                catch (Exception $exception){}
             }
         }
         return $data;
@@ -179,6 +185,31 @@ class Validator implements ValidatorsInterface
         }
 
         return implode(',',$choiceOptions);
+    }
+
+    /**
+     * @param ColorField $field
+     * @return ColorField
+     * @throws ValidationFailedException
+     */
+    private function colorField(ColorField $field): ColorField
+    {
+        if(!preg_match("/#([a-f0-9]{3}){1,2}\b/i", $this->data)){
+            throw new ValidationFailedException('Invalid hex color');
+        }
+        $field->setCleanedData($this->data);
+        return $field;
+    }
+
+    /**
+     * @param DataListField $field
+     * @return DataListField
+     * @throws ValidationFailedException
+     */
+    private function dataListField(DataListField $field): DataListField
+    {
+        $field->setCleanedData($this->validateChoiceOptions($field));
+        return $field;
     }
 
     /**
@@ -313,6 +344,20 @@ class Validator implements ValidatorsInterface
         $this->checkMaxValue($field->getProperty('maxValue'), $this->data);
 
         $field->setCleanedData((float) $this->data);
+        return $field;
+    }
+
+    /**
+     * @param HiddenField $field
+     * @return HiddenField
+     * @throws ValidationFailedException
+     */
+    private function hiddenField(HiddenField $field): HiddenField
+    {
+        $this->checkMinLength($field->getProperty('minLength'), $this->data);
+        $this->checkMaxLength($field->getProperty('maxVLength'), $this->data);
+
+        $field->setCleanedData((string) $this->data);
         return $field;
     }
 

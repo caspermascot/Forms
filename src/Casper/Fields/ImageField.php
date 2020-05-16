@@ -82,9 +82,21 @@ class ImageField extends FileField
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name): string
+    protected function asHtml(string $name=''): string
     {
-        $replacement = "type='image' ";
+        $replacement = "type='file' ";
+        if(!empty($this->height)){
+            $replacement .= "height='{$this->height}' ";
+        }
+
+        if(!empty($this->width)){
+            $replacement .= "width='{$this->width}' ";
+        }
+
+        if(!empty($this->accepts)){
+            $replacement .= "accepts='{$this->accepts}' ";
+        }
+
         $res = parent::asHtml($name);
         $res = str_replace("type='file'", $replacement, $res);
         return $res;

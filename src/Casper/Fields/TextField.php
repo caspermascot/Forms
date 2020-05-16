@@ -45,4 +45,24 @@ class TextField extends Fields
         $res['rows'] = $this->getProperty('rows');
         return $res;
     }
+    /**
+     * @param string $name
+     * @return string
+     */
+    protected function asHtml(string $name=''): string
+    {
+        $res = parent::asHtml($name);
+        $fieldHtml = $this->getFieldHtml();
+        $field = "<textarea {$fieldHtml} ";
+        if(!empty($this->cols)){
+            $field .= " cols='{$this->cols}' ";
+        }
+        if(!empty($this->rows)){
+            $field .= " rows='{$this->rows}' ";
+        }
+        $field .= " ></textarea>";
+
+        $res = str_replace('htmlField', $field, $res);
+        return $res;
+    }
 }

@@ -4,7 +4,7 @@
 namespace Casper\Fields;
 
 
-class UrlField extends CharField
+class ColorField extends Fields
 {
     /**
      * @param string $name
@@ -12,8 +12,9 @@ class UrlField extends CharField
      */
     protected function asHtml(string $name=''): string
     {
+        $replacement = "type='color' ";
         $res = parent::asHtml($name);
-        $res = str_replace("type='text'", "type='url'", $res);
+        $res = str_replace("type='text'", $replacement, $res);
         return $res;
     }
 }

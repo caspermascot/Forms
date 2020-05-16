@@ -4,7 +4,7 @@
 namespace Casper\Fields;
 
 
-class SubmitButtonField extends ButtonField
+class SubmitButtonField extends BaseButtonField
 {
 
 }
