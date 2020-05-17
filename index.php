@@ -1,11 +1,11 @@
 <?php
 
 
-use Tests\LoginForm;
+use Tests\TestLoginForm;
 
 require(__DIR__ . '/vendor/autoload.php');
 //die(phpinfo());
-$form = new LoginForm();
+$form = new TestLoginForm();
 
 print_r($form->asHtml());
 //print_r(json_encode($form->asJson()));

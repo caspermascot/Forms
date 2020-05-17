@@ -12,19 +12,6 @@ class TestCase extends PHPUnit_TestCase
 
     protected function getTestForm(): Forms
     {
-        return new TestForm();
-    }
-}
-
-class TestForm extends Forms
-{
-
-    /**
-     * add form fields, set method and url
-     * return null
-     */
-    protected function build(): void
-    {
-        // TODO: Implement build() method.
+        return new EmptyTestForm();
     }
 }

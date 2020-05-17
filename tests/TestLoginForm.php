@@ -30,7 +30,7 @@ use Casper\Fields\TextField;
 use Casper\Fields\UrlField;
 use Casper\Forms;
 
-class LoginForm extends Forms
+class TestLoginForm extends Forms
 {
     /**
      * @var IntegerField
@@ -119,10 +119,21 @@ class LoginForm extends Forms
      */
     protected function build(): void
     {
-        $this->age = $this->integerField()->label('ish')->maxValue(450)->default(45)->step(4)->required(false);
+        $this->age = $this->integerField()
+            ->label('Current age')
+            ->maxValue(120)
+            ->default(25)
+            ->step(1)
+            ->required(false);
+
         $this->name = $this->charField()->regex("^[a-zA-Z ]*$");
-        $this->email = $this->emailField()->required(true)->customErrorMessages('invalid email address');
+
+        $this->email = $this->emailField()
+            ->required(true)
+            ->customErrorMessages('invalid email address');
+
         $this->url = $this->urlField()->required(true);
+
         $this->password = $this->passwordField()->required(true)
                             ->mustContainLowerCase(true)
                             ->mustContainNumber(true)
@@ -131,12 +142,31 @@ class LoginForm extends Forms
                             ->minLength(8)
                             ->maxLength(10)
                             ->helpText('symbol, number, lower case, upper case');
-        $this->phone = $this->phoneField()->internationalFormat(true)->required(false);
-        $this->date = $this->dateField()->default('2020-05-22')->minValue('2020-05-20')->required(false);
-        $this->select = $this->choiceField()->multiple(true)->choices(['male','female','each','unknown'])->default(['male','female'])->required(false);
-        $this->submit = $this->submitButtonField()->type('submit');
-        $this->float = $this->floatField()->step(0.3);
+
+        $this->phone = $this->phoneField()
+            ->internationalFormat(true)
+            ->required(false);
+
+        $this->date = $this->dateField()
+            ->default('2020-05-22')
+            ->minValue('2020-05-20')
+            ->required(false);
+
+        $this->select = $this->choiceField()
+            ->multiple(true)
+            ->choices(['male','female','each','unknown'])
+            ->default(['male','female'])
+            ->required(false);
+
+        $this->submit = $this->submitButtonField()
+            ->type('submit');
+
+        $this->float = $this
+            ->floatField()
+            ->step(0.3);
+
         $this->range = $this->rangeField();
+
         $this->radio = $this->radioField()->choices(['man','woman','each'])->autoFocus(true)->default('man')->required(false);
         $this->checkBox = $this->checkBoxField()->choices(['man','woman','each'])
             ->autoFocus(true)
@@ -146,13 +176,20 @@ class LoginForm extends Forms
             ->multiple(true);
 
         $this->reset = $this->resetButtonField();
-        $this->button = $this->buttonField()->label('stylish-button');
+
+        $this->button = $this->buttonField()->label('random-button');
+
         $this->hidden = $this->hiddenField();
+
         $this->color = $this->colorField();
+
         $this->textarea = $this->textField()->cols(40)->rows(5);
+
         $this->photo = $this->imageField()->width(200)->height(10)->alt('image');
+
         $this->dataList = $this->dataListField()->choices(['audi','benz','bmw','pagani']);
-        $this->setUrl('http://localhost/forms/');
+        
+        $this->setUrl('/forms/');
     }
 
     /**
