@@ -1,5 +1,5 @@
 {
-    "name": "forms/casperForms",
+    "name": "caspermascot/forms",
     "description": "A fast PHP7 implementation of Html forms",
     "license": "MIT",
     "keywords": ["forms", "html", "form-validation", "php"],
