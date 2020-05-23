@@ -61,16 +61,18 @@ class Validator implements ValidatorsInterface
                 throw new ValidationFailedException(self::requiredErrorMessage);
             }
         }
-
-        if(is_null($this->data)){
-            if($field->getProperty('allowNull') === false){
-                throw new ValidationFailedException(self::allowNullErrorMessage);
+    
+        if(isset($this-data){
+            if(is_null($this->data)){
+                if($field->getProperty('allowNull') === false){
+                    throw new ValidationFailedException(self::allowNullErrorMessage);
+                }
             }
-        }
 
-        if(empty($this->data)){
-            if($field->getProperty('allowBlank') === false){
-                throw new ValidationFailedException(self::allowBlankErrorMessage);
+            if(empty($this->data)){
+                if($field->getProperty('allowBlank') === false){
+                    throw new ValidationFailedException(self::allowBlankErrorMessage);
+                }
             }
         }
 
