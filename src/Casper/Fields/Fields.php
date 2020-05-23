@@ -29,15 +29,15 @@ class Fields extends BaseField
     /**
      * @var bool|null
      */
-    protected ?bool $required = true;
+    protected ?bool $required = false;
     /**
      * @var bool|null
      */
-    protected ?bool $allowNull = false;
+    protected ?bool $allowNull = true;
     /**
      * @var bool|null
      */
-    protected ?bool $allowBlank = false;
+    protected ?bool $allowBlank = true;
     /**
      * @var string|null
      */
