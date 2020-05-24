@@ -140,7 +140,7 @@ class Validator implements ValidatorsInterface
     private function charField(CharField $field): CharField
     {
         $this->checkMinLength($field->getProperty('minLength'), $this->data);
-        $this->checkMaxLength($field->getProperty('maxVLength'), $this->data);
+        $this->checkMaxLength($field->getProperty('maxLength'), $this->data);
 
         $field->setCleanedData((string) $this->data);
         return $field;
@@ -357,7 +357,7 @@ class Validator implements ValidatorsInterface
     private function hiddenField(HiddenField $field): HiddenField
     {
         $this->checkMinLength($field->getProperty('minLength'), $this->data);
-        $this->checkMaxLength($field->getProperty('maxVLength'), $this->data);
+        $this->checkMaxLength($field->getProperty('maxLength'), $this->data);
 
         $field->setCleanedData((string) $this->data);
         return $field;
@@ -557,7 +557,7 @@ class Validator implements ValidatorsInterface
     private function slugField(SlugField $field): SlugField
     {
         $this->checkMinLength($field->getProperty('minLength'), $this->data);
-        $this->checkMaxLength($field->getProperty('maxVLength'), $this->data);
+        $this->checkMaxLength($field->getProperty('maxLength'), $this->data);
 
         $field->setCleanedData(FormUtils::slugify($this->data));
         return $field;
@@ -571,7 +571,7 @@ class Validator implements ValidatorsInterface
     private function textField(TextField $field): TextField
     {
         $this->checkMinLength($field->getProperty('minLength'), $this->data);
-        $this->checkMaxLength($field->getProperty('maxVLength'), $this->data);
+        $this->checkMaxLength($field->getProperty('maxLength'), $this->data);
 
         $field->setCleanedData((string) $this->data);
         return $field;
