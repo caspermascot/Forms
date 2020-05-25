@@ -27,12 +27,6 @@
     "autoload": {
         "psr-4": {
             "Casper\\": "src/Casper/",
-            "Core\\": "src/Core/",
-            "Controllers\\": "src/Controllers/",
-            "Modules\\": "src/Modules/",
-            "Libraries\\": "src/Libraries/",
-            "Views\\": "src/Views/",
-            "Templates\\": "src/Views/Templates",
             "Tests\\": "tests/"
         }
     }

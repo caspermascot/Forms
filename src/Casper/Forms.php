@@ -379,28 +379,36 @@ abstract class Forms
     }
 
     /**
+     * @param string|null $data
      * @return array
      * @throws FormNotValidatedException
      */
-    public function getCleanedData()
+    public function getCleanedData(string $data=null)
     {
         if(!isset($this->validated)){
             throw new FormNotValidatedException();
         }
 
+        if(!is_null($data)){
+            return $this->cleanedData[$data] ?? null;
+        }
         return isset($this->cleanedData) ? $this->cleanedData : [];
     }
 
     /**
+     * @param string|null $data
      * @return array
      * @throws FormNotValidatedException
      */
-    public function getErrors()
+    public function getErrors(string $data=null)
     {
         if(!isset($this->validated)){
             throw new FormNotValidatedException();
         }
 
+        if(!is_null($data)){
+            return $this->errors[$data] ?? null;
+        }
         return isset($this->errors) ? $this->errors : [];
     }
 
