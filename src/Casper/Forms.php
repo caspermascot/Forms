@@ -380,7 +380,7 @@ abstract class Forms
 
     /**
      * @param string|null $data
-     * @return array
+     * @return array|mixed|null
      * @throws FormNotValidatedException
      */
     public function getCleanedData(string $data=null)
@@ -397,7 +397,7 @@ abstract class Forms
 
     /**
      * @param string|null $data
-     * @return array
+     * @return array|mixed|null
      * @throws FormNotValidatedException
      */
     public function getErrors(string $data=null)
