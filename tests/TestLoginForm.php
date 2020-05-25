@@ -148,8 +148,8 @@ class TestLoginForm extends Forms
             ->required(false);
 
         $this->date = $this->dateField()
-            ->default('2002-05-25')
-            ->minValue('2020-05-20')
+            ->default('2020-05-25')
+            ->minValue('2002-01-01')
             ->required(false);
 
         $this->select = $this->choiceField()

@@ -239,7 +239,7 @@ class Validator implements ValidatorsInterface
     {
         $minValue = $field->getProperty('minValue');
         if(isset($minValue)){
-            if(strtotime($this->data) < strtotime($minValue)){
+            if(strtotime($minValue) < strtotime($this->data) ){
                 throw new ValidationFailedException("Value cannot be less than {$minValue}");
             }
         }
