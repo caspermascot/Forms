@@ -29,6 +29,7 @@ class FormTest extends TestCase
         if($loginForm->isValid()){
             self::assertEmpty($loginForm->getErrors());
         }else{
+            print_r($loginForm->getErrors());
             self::assertEmpty($loginForm->getCleanedData());
         }
     }

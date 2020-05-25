@@ -240,14 +240,14 @@ class Validator implements ValidatorsInterface
         $minValue = $field->getProperty('minValue');
         if(isset($minValue)){
             if(strtotime($this->data) < strtotime($minValue)){
-                throw new ValidationFailedException("Date cannot be less than {$minValue}");
+                throw new ValidationFailedException("Value cannot be less than {$minValue}");
             }
         }
 
         $maxValue = $field->getProperty('maxValue');
         if(isset($maxValue)){
-            if(strtotime($this->data) > strtotime($minValue)){
-                throw new ValidationFailedException("Date cannot be greater than {$minValue}");
+            if(strtotime($this->data) > strtotime($maxValue)){
+                throw new ValidationFailedException("Value cannot be greater than {$maxValue}");
             }
         }
     }
