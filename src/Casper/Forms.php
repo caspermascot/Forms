@@ -151,7 +151,22 @@ abstract class Forms
      */
     public function getData(): array
     {
-        return isset($this->data) ? $this->data : [];
+        $currData = isset($this->data) ? $this->data : [];
+        $fieldsData = [];
+        foreach (get_object_vars($this) as $key => $var){
+            if($var instanceof Fields)
+            {
+                if(!empty($default = $var->getProperty('default'))){
+                    $fieldsData[$key] = $default;
+                }
+
+                if(!empty($setData = $var->getProperty('data'))){
+                    $fieldsData[$key] = $setData;
+                }
+            }
+        }
+
+        return array_merge($currData, $fieldsData);
     }
 
     /**
