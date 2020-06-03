@@ -9,11 +9,40 @@ class TextField extends Fields
     /**
      * @var int
      */
+    protected int $minLength;
+    /**
+     * @var int
+     */
+    protected int $maxLength;
+
+    /**
+     * @var int
+     */
     protected int $cols;
     /**
      * @var int
      */
     protected int $rows;
+
+    /**
+     * @param int $minLength
+     * @return $this
+     */
+    public function minLength(int $minLength): self
+    {
+        $this->minLength = $minLength;
+        return $this;
+    }
+
+    /**
+     * @param int $maxLength
+     * @return $this
+     */
+    public function maxLength(int $maxLength): self
+    {
+        $this->maxLength = $maxLength;
+        return $this;
+    }
 
     /**
      * @param int $cols
@@ -41,6 +70,8 @@ class TextField extends Fields
     public function asJson(): array
     {
         $res = parent::asJson();
+        $res['minLength'] = $this->getProperty('minLength');
+        $res['maxLength'] = $this->getProperty('maxLength');
         $res['cols'] = $this->getProperty('cols');
         $res['rows'] = $this->getProperty('rows');
         return $res;
@@ -54,6 +85,14 @@ class TextField extends Fields
         $res = parent::asHtml($name);
         $fieldHtml = $this->getFieldHtml();
         $field = "<textarea {$fieldHtml} ";
+        if(!empty($this->minLength)){
+            $field .= "minlength='{$this->minLength}' ";
+        }
+
+        if(!empty($this->maxLength)){
+            $field .= "maxlength='{$this->maxLength}' ";
+        }
+
         if(!empty($this->cols)){
             $field .= " cols='{$this->cols}' ";
         }
