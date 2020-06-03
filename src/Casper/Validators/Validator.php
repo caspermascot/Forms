@@ -206,11 +206,13 @@ class Validator implements ValidatorsInterface
     /**
      * @param DataListField $field
      * @return DataListField
-     * @throws ValidationFailedException
      */
     private function dataListField(DataListField $field): DataListField
     {
-        $field->setCleanedData($this->validateChoiceOptions($field));
+        // no point in validating this
+        $choiceOptions = is_array($this->data) ? $this->data : explode(',',$this->data);
+        $data = implode(',',$choiceOptions);
+        $field->setCleanedData($data);
         return $field;
     }
 
