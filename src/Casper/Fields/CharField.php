@@ -47,6 +47,22 @@ class CharField extends Fields
     }
 
     /**
+     * @return array
+     */
+    public function asJsonSchema(): array
+    {
+        $res = parent::asJsonSchema();
+        if(!empty($this->getProperty('minLength'))){
+            $res['minLength'] = $this->getProperty('minLength');
+        }
+
+        if(!empty($this->getProperty('maxLength'))){
+            $res['maxLength'] = $this->getProperty('maxLength');
+        }
+        return $res;
+    }
+
+    /**
      * @param string $name
      * @return string
      */

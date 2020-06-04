@@ -60,6 +60,25 @@ class IntegerField extends Fields
         $res['step'] = $this->getProperty('step');
         return $res;
     }
+
+    /**
+     * @return array
+     */
+    public function asJsonSchema(): array
+    {
+        $res = parent::asJsonSchema();
+        $res['type'] = 'number';
+
+        if(!empty($this->getProperty('minValue'))){
+            $res['minimum'] = $this->getProperty('minValue');
+        }
+
+        if(!empty($this->getProperty('maxValue'))){
+            $res['maximum'] = $this->getProperty('maxValue');
+        }
+        return $res;
+    }
+
     /**
      * @param string $name
      * @return string

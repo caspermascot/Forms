@@ -102,4 +102,15 @@ class Choices extends Fields
         $temp.= "<label for='{$choices->getProperty('name')}'>{$label}</label> ";
         return $temp;
     }
+
+    /**
+     * @return array
+     */
+    public function asJsonSchema(): array
+    {
+        $res = parent::asJsonSchema();
+        $res['enum'] = $this->choices;
+
+        return $res;
+    }
 }

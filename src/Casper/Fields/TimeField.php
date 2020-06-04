@@ -16,4 +16,15 @@ class TimeField extends DateField
         $res = str_replace("type='date'", "type='time'", $res);
         return $res;
     }
+
+    /**
+     * @return array
+     */
+    public function asJsonSchema(): array
+    {
+        $res = parent::asJsonSchema();
+        $res['format'] = 'time';
+
+        return $res;
+    }
 }

@@ -334,6 +334,36 @@ abstract class Forms
     }
 
     /**
+     * @return array
+     */
+    public function asJsonSchema(): array
+    {
+        $response = [
+            '$id' => "https://example.com/geographical-location.schema.json",
+            '$schema' => "http://json-schema.org/draft-07/schema#",
+            'title' => "{$this->formName} Values",
+            'description' => "Auto generated json schema for form - {$this->formName}.",
+            'type' => "object",
+        ];
+
+        $required = [];
+        $properties = [];
+        foreach (get_object_vars($this) as $key => $var){
+            if($var instanceof Fields){
+                if($var->getProperty('required') == true){
+                    $required[] = $key;
+                }
+
+                $properties[$key] = $var->asJsonSchema();
+            }
+        }
+        $response['required'] = $required;
+        $response['properties'] = $properties;
+
+        return $response;
+    }
+
+    /**
      * @throws Exception
      */
     private function validate(): void

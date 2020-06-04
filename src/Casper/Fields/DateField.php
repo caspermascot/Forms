@@ -63,4 +63,16 @@ class DateField extends Fields
         $res['maxValue'] = $this->getProperty('maxValue');
         return $res;
     }
+
+    /**
+     * @return array
+     */
+    public function asJsonSchema(): array
+    {
+        $res = parent::asJsonSchema();
+        $res['type'] = 'string';
+        $res['format'] = 'date';
+
+        return $res;
+    }
 }

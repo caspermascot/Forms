@@ -387,4 +387,43 @@ class Fields extends BaseField
 
         return $res;
     }
+
+    /**
+     * @return array
+     */
+    public function asJsonSchema(): array
+    {
+        $response = [
+            'type' => 'string',
+        ];
+
+        if(!empty($this->regex)){
+            $response['pattern'] = $this->regex;
+        }
+
+        if(!empty($this->placeHolder)){
+            $response['description'] = $this->placeHolder;
+        }
+
+        if(!empty($this->label)){
+            $response['label'] = $this->label;
+        }
+
+        if(!empty($this->readOnly)){
+            $response['readOnly'] = $this->readOnly;
+        }
+
+        if(!empty($this->helpText)){
+            $response['example'] = $this->helpText;
+        }
+
+        if(!empty($this->data)){
+            if(!is_array($this->data)){
+                $response['default'] = $this->data;
+            }
+        }
+
+        return $response;
+    }
+
 }
