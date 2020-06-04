@@ -210,7 +210,7 @@ class Validator implements ValidatorsInterface
      */
     private function dataListField(DataListField $field): DataListField
     {
-        if($field->getProperty('allowNewContent') == true){
+        if($field->getProperty('allowNewContent') == false){
             $field->setCleanedData($this->validateChoiceOptions($field));
         }else{
             // no point in validating this
