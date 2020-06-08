@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Tests;
+namespace FormTests;
 
 
 class FieldsFormTest extends FormTestCase

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Tests;
+namespace FormTests;
 
 
 use Casper\Exceptions\FieldCreateFailedException;
