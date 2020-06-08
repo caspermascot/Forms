@@ -4,7 +4,7 @@
 namespace Tests;
 
 
-class FieldsTest extends TestCase
+class FieldsFormTest extends FormTestCase
 {
 
     public function testSubmitButtonField()

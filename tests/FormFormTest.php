@@ -10,7 +10,7 @@ use Casper\Exceptions\InvalidMethodException;
 use Casper\Exceptions\InvalidUrlException;
 use Exception;
 
-class FormTest extends TestCase
+class FormFormTest extends FormTestCase
 {
     /**
      * @throws FieldCreateFailedException
