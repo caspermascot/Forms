@@ -379,7 +379,11 @@ class Validator implements ValidatorsInterface
     private function imageField(ImageField $field): ImageField
     {
         try{
-            $check = getimagesize($this->data["tmp_name"]);
+            if(empty($this->data["tmp_name"])){
+                $check = false;
+            }else{
+                $check = getimagesize($this->data["tmp_name"]);
+            }
         }catch (Exception $exception){
             $check = false;
         }
