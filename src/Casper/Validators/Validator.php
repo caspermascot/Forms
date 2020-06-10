@@ -109,7 +109,7 @@ class Validator implements ValidatorsInterface
             // perhaps look in $_FILES
             if(($field instanceof FileField or $field instanceof ImageField)){
                 $name = $field->getProperty('name');
-                if(!empty($_FILES[$name])){
+                if(!empty($_FILES[$name]['name'][0])){
                     $data = $_FILES[$name];
                 }
             }
