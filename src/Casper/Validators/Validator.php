@@ -111,6 +111,7 @@ class Validator implements ValidatorsInterface
                 $name = $field->getProperty('name');
                 if(!empty($_FILES[$name]['name'][0])){
                     $data = $_FILES[$name];
+                    $field->setData($data);
                 }
             }
         }
