@@ -312,7 +312,7 @@ class Validator implements ValidatorsInterface
     {
         $multiple = $field->getProperty('multiple');
 
-        if($multiple == false){
+        if($multiple == true){
             $count = count($this->data['size']);
             $minSize = $field->getProperty('minSize');
             for($index = 0; $index < $count; $index+=1) {
