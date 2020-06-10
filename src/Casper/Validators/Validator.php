@@ -310,31 +310,65 @@ class Validator implements ValidatorsInterface
      */
     private function validateFileProperties(FileField $field): void
     {
-        $minSize = $field->getProperty('minSize');
-        if(isset($minSize)){
-            if($this->data["size"] < $minSize){
-                throw new ValidationFailedException("Size cannot be less than {$minSize}");
+        $multiple = $field->getProperty('multiple');
+
+        if($multiple == false){
+            $count = count($this->data);
+            $minSize = $field->getProperty('minSize');
+            for($index = 0; $index < $count; $index+=1) {
+                if (isset($minSize)) {
+                    if ($this->data["size"][$index] < $minSize) {
+                        throw new ValidationFailedException("Size cannot be less than {$minSize}");
+                    }
+                }
+
+                $maxSize = $field->getProperty('maxSize');
+                if (isset($maxSize)) {
+                    if ($this->data["size"][$index] > $maxSize) {
+                        throw new ValidationFailedException("Size cannot be greater than {$maxSize}");
+                    }
+                }
+
+                $type = $field->getProperty('type');
+                if (isset($type)) {
+                    $dir = "uploads/";
+                    $target_file = $dir . basename($this->data["name"][$index]);
+                    $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                    $type = array_values($type);
+                    if (!in_array(strtolower($fileType), $type)) {
+                        throw new ValidationFailedException("Unsupported type given. Must be one of ( " . implode($type) . " )");
+                    }
+                }
+            }
+        }else{
+            $minSize = $field->getProperty('minSize');
+            if(isset($minSize)){
+                if($this->data["size"] < $minSize){
+                    throw new ValidationFailedException("Size cannot be less than {$minSize}");
+                }
+            }
+
+            $maxSize = $field->getProperty('maxSize');
+            if(isset($maxSize)){
+                if($this->data["size"] > $maxSize){
+                    throw new ValidationFailedException("Size cannot be greater than {$maxSize}");
+                }
+            }
+
+            $type = $field->getProperty('type');
+            if(isset($type)){
+                $dir = "uploads/";
+                $target_file = $dir . basename($this->data["name"]);
+                $fileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+                $type = array_values($type);
+                if(!in_array(strtolower($fileType), $type)){
+                    throw new ValidationFailedException("Unsupported type given. Must be one of ( ".implode($type)." )");
+                }
             }
         }
 
-        $maxSize = $field->getProperty('maxSize');
-        if(isset($maxSize)){
-            if($this->data["size"] > $maxSize){
-                throw new ValidationFailedException("Size cannot be greater than {$maxSize}");
-            }
-        }
-
-        $type = $field->getProperty('type');
-        if(isset($type)){
-            $dir = "uploads/";
-            $target_file = $dir . basename($this->data["name"]);
-            $fileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-            $type = array_values($type);
-            if(!in_array(strtolower($fileType), $type)){
-                throw new ValidationFailedException("Unsupported type given. Must be one of ( ".implode($type)." )");
-            }
-        }
 
 
     }
@@ -378,18 +412,38 @@ class Validator implements ValidatorsInterface
      */
     private function imageField(ImageField $field): ImageField
     {
-        try{
-            if(empty($this->data["tmp_name"])){
-                $check = false;
-            }else{
-                $check = getimagesize($this->data["tmp_name"]);
-            }
-        }catch (Exception $exception){
-            $check = false;
-        }
+        $multiple = $field->getProperty('multiple');
+        if($multiple == true){
+            $count = count($this->data);
+            for($index = 0; $index < $count; $index+=1){
+                try{
+                    if(empty($this->data["tmp_name"][$index])){
+                        $check = false;
+                    }else{
+                        $check = getimagesize($this->data["tmp_name"][$index]);
+                    }
+                }catch (Exception $exception){
+                    $check = false;
+                }
 
-        if($check == false) {
-            throw new ValidationFailedException('File is not an image');
+                if($check == false) {
+                    throw new ValidationFailedException('File is not an image');
+                }
+            }
+        }else{
+            try{
+                if(empty($this->data["tmp_name"])){
+                    $check = false;
+                }else{
+                    $check = getimagesize($this->data["tmp_name"]);
+                }
+            }catch (Exception $exception){
+                $check = false;
+            }
+
+            if($check == false) {
+                throw new ValidationFailedException('File is not an image');
+            }
         }
 
         $this->validateFileProperties($field);

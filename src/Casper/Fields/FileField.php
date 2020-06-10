@@ -24,6 +24,11 @@ class FileField extends Fields
     protected string $src;
 
     /**
+     * @var bool
+     */
+    protected bool $multiple = false;
+
+    /**
      * @param int $minSize
      * @return FileField
      */
@@ -64,6 +69,16 @@ class FileField extends Fields
     }
 
     /**
+     * @param bool $multiple
+     * @return $this
+     */
+    public function multiple(bool $multiple): self
+    {
+        $this->multiple = $multiple;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function asJson(): array
@@ -72,6 +87,7 @@ class FileField extends Fields
         $res['minSize'] = $this->getProperty('minSize');
         $res['maxSize'] = $this->getProperty('maxSize');
         $res['type']    = $this->getProperty('type');
+        $res['multiple'] = $this->getProperty('multiple');
         return $res;
     }
 
@@ -86,8 +102,17 @@ class FileField extends Fields
             $replacement .= "src='{$this->src}' ";
         }
 
+        if(!empty($this->multiple)){
+            $replacement .= "multiple='true' ";
+        }
+
+
         $res = parent::asHtml($name);
         $res = str_replace("type='text'", $replacement, $res);
+
+        if(!empty($this->multiple)){
+            $res = str_replace(" name='{$name}' ", " name='{$name}[]' ", $res);
+        }
         return $res;
     }
 }
