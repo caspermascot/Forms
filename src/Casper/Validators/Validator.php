@@ -378,7 +378,12 @@ class Validator implements ValidatorsInterface
      */
     private function imageField(ImageField $field): ImageField
     {
-        $check = getimagesize($this->data["tmp_name"]);
+        try{
+            $check = getimagesize($this->data["tmp_name"]);
+        }catch (Exception $exception){
+            $check = false;
+        }
+
         if($check == false) {
             throw new ValidationFailedException('File is not an image');
         }
