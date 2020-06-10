@@ -1,7 +1,7 @@
 <?php
 
 
-use Tests\TestLoginForm;
+use FormTests\TestLoginForm;
 
 require(__DIR__ . '/vendor/autoload.php');
 //die(phpinfo());
