@@ -319,14 +319,14 @@ class Validator implements ValidatorsInterface
             for($index = 0; $index < $count; $index+=1) {
                 if (isset($minSize)) {
                     if ($this->data["size"][$index] < $minSize) {
-                        throw new ValidationFailedException("Size cannot be less than {$minSize}");
+                        throw new ValidationFailedException(sprintf("Size cannot be less than %s mb", $minSize/1000000));
                     }
                 }
 
                 $maxSize = $field->getProperty('maxSize');
                 if (isset($maxSize)) {
                     if ($this->data["size"][$index] > $maxSize) {
-                        throw new ValidationFailedException("Size cannot be greater than {$maxSize}");
+                        throw new ValidationFailedException(sprintf("Size cannot be greater than %s mb", $maxSize/1000000));
                     }
                 }
 
