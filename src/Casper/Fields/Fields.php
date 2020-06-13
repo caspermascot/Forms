@@ -102,6 +102,28 @@ class Fields extends BaseField
     }
 
     /**
+     * @return mixed|null
+     */
+    public function getData()
+    {
+        $data = $this->getProperty('data');
+        if(empty($data))
+        {
+            // perhaps look in $_FILES
+            if(($this instanceof FileField or $this instanceof ImageField)){
+                $name = $this->getProperty('name');
+                if(!empty($name)){
+                    if(!empty($_FILES[$name]['name'][0])){
+                        $data = $_FILES[$name];
+                        $this->setData($data);
+                    }
+                }
+            }
+        }
+        return $data;
+    }
+
+    /**
      * @param $data
      * @return self
      */

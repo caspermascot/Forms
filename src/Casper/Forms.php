@@ -163,6 +163,12 @@ abstract class Forms
                 if(!empty($setData = $var->getProperty('data'))){
                     $fieldsData[$key] = $setData;
                 }
+
+                if(empty($fieldsData[$key])){
+                    if(!empty($setData = $var->getData())){
+                        $fieldsData[$key] = $setData;
+                    }
+                }
             }
         }
 
