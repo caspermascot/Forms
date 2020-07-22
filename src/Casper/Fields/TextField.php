@@ -80,7 +80,7 @@ class TextField extends Fields
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name=''): string
+    public function asHtml(string $name=''): string
     {
         $res = parent::asHtml($name);
         $fieldHtml = $this->getFieldHtml();

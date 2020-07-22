@@ -12,7 +12,7 @@ class CheckBoxField extends ChoiceField
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name=''): string
+    public function asHtml(string $name=''): string
     {
         $res = parent::getParentHtml($name);
         $field = '';

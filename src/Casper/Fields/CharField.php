@@ -66,7 +66,7 @@ class CharField extends Fields
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name=''): string
+    public function asHtml(string $name=''): string
     {
         $replacement = "type='text' ";
         if(!empty($this->minLength)){

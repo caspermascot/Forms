@@ -36,7 +36,7 @@ class ChoiceField extends Choices
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name=''): string
+    public function asHtml(string $name=''): string
     {
         $res = parent::getParentHtml($name);
         $fieldHtml = $this->getFieldHtml();

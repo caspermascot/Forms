@@ -10,7 +10,7 @@ class ColorField extends Fields
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name=''): string
+    public function asHtml(string $name=''): string
     {
         $replacement = "type='color' ";
         $res = parent::asHtml($name);

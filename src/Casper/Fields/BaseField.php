@@ -29,6 +29,7 @@ class BaseField
         if(method_exists($this, $name)){
             return call_user_func_array([$this, $name], $arguments);
         }
+
         return null;
     }
 
@@ -48,7 +49,7 @@ class BaseField
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name = ''): string
+    public function asHtml(string $name = ''): string
     {
         if(empty($name)){
             $name = $this->getProperty('name');

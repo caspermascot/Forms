@@ -126,7 +126,7 @@ class TestLoginForm extends Forms
             ->step(1)
             ->required(false);
 
-//        $this->name = $this->charField()->regex("^[a-zA-Z ]*$");
+        $this->name = $this->charField()->regex("^[a-zA-Z ]*$")->required(false)->default('nameData');
 
 //        $this->email = $this->emailField()
 //            ->required(true)
@@ -161,9 +161,10 @@ class TestLoginForm extends Forms
 //        $this->submit = $this->submitButtonField()
 //            ->type('submit');
 //
-//        $this->float = $this
-//            ->floatField()
-//            ->step(0.3);
+        $this->float = $this
+            ->floatField()
+            ->step(0.3)
+        ->required(false);
 //
 //        $this->range = $this->rangeField();
 

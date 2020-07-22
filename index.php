@@ -4,6 +4,12 @@
 use FormTests\TestLoginForm;
 
 require(__DIR__ . '/vendor/autoload.php');
+
+function newLine()
+{
+    echo '<br><br>';
+}
+
 //die(phpinfo());
 $form = new TestLoginForm();
 
@@ -29,6 +35,14 @@ print_r(json_encode($form->getCleanedData()));
 print_r(json_encode($form->getErrors()));
 
 print_r($form->asHtml());
+
+//newLine();
+//echo '<pre>';
+//echo $form->photo;
+//
+newLine();
+var_dump($form->age->data(22));
+
 
 //echo '<html>
 //    <head></head>

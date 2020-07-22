@@ -123,6 +123,15 @@ class Fields extends BaseField
         return $data;
     }
 
+    public function data($data=null)
+    {
+        if(!is_null($data)){
+            $this->setData($data);
+        }
+        $this->validate();
+        return $this->getProperty('cleanedData');
+    }
+
     /**
      * @param $data
      * @return self
@@ -310,7 +319,7 @@ class Fields extends BaseField
      * @param string $name
      * @return string
      */
-    protected function asHtml(string $name=''): string
+    public function asHtml(string $name=''): string
     {
         $res = parent::asHtml($name);
         $label = ucfirst($this->getProperty('label'));
@@ -446,6 +455,11 @@ class Fields extends BaseField
         }
 
         return $response;
+    }
+
+    function __toString(): ?string
+    {
+        return json_encode($this->getData());
     }
 
 }
