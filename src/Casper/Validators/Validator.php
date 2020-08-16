@@ -182,7 +182,7 @@ class Validator implements ValidatorsInterface
         if(isset($choices)){
             foreach ($choiceOptions as $key => $value){
                 if(!in_array($value, $choices)){
-                    throw new ValidationFailedException("{$value} is not a valid option for this field");
+                    throw new ValidationFailedException(sprintf("{$value} is not a valid option for this field, supported options are '%s'", implode(',',$choices)));
                 }
             }
         }
