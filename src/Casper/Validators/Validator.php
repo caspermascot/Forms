@@ -69,7 +69,7 @@ class Validator implements ValidatorsInterface
                 }
             }
 
-            if(empty($this->data)){
+            if(empty($this->data) AND !$this instanceof IntegerField){
                 if($field->getProperty('allowBlank') === false){
                     throw new ValidationFailedException(self::allowBlankErrorMessage);
                 }
