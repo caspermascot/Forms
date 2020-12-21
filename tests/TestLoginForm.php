@@ -7,6 +7,7 @@ namespace FormTests;
 use Casper\Exceptions\InvalidButtonTypeException;
 use Casper\Exceptions\ValidationFailedException;
 use Casper\Fields\BaseField;
+use Casper\Fields\BooleanField;
 use Casper\Fields\ButtonField;
 use Casper\Fields\CharField;
 use Casper\Fields\CheckBoxField;
@@ -32,86 +33,87 @@ use Casper\Forms;
 
 class TestLoginForm extends Forms
 {
-    /**
-     * @var IntegerField
-     */
-    public IntegerField $age;
-    /**
-     * @var CharField
-     */
-    public CharField $name;
-    /**
-     * @var SubmitButtonField
-     */
-    public SubmitButtonField $submit;
-    /**
-     * @var EmailField|Fields
-     */
-    public EmailField $email;
-    /**
-     * @var Fields|PhoneField
-     */
-    public PhoneField $phone;
-    /**
-     * @var Fields|PasswordField
-     */
-    public PasswordField $password;
-    /**
-     * @var DateField|Fields
-     */
-    public DateField $date;
-    /**
-     * @var Fields|UrlField
-     */
-    public UrlField $url;
-    /**
-     * @var ChoiceField|Fields
-     */
-    public ChoiceField $select;
-    /**
-     * @var FloatField|IntegerField
-     */
-    public FloatField $float;
-    /**
-     * @var RangeField
-     */
-    public RangeField $range;
-    /**
-     * @var RadioField
-     */
-    public RadioField $radio;
-    /**
-     * @var CheckBoxField|Fields
-     */
-    public CheckBoxField $checkBox;
-    /**
-     * @var ResetButtonField
-     */
-    public ResetButtonField $reset;
-    /**
-     * @var BaseField|ButtonField
-     */
-    public ButtonField $button;
-    /**
-     * @var HiddenField
-     */
-    public HiddenField $hidden;
-    /**
-     * @var ColorField
-     */
-    public ColorField $color;
-    /**
-     * @var TextField
-     */
-    public TextField $textarea;
-    /**
-     * @var ImageField
-     */
-    public ImageField $photo;
-    /**
-     * @var DataListField
-     */
-    public DataListField $dataList;
+//    /**
+//     * @var IntegerField
+//     */
+//    public IntegerField $age;
+//    /**
+//     * @var CharField
+//     */
+//    public CharField $name;
+//    /**
+//     * @var SubmitButtonField
+//     */
+//    public SubmitButtonField $submit;
+//    /**
+//     * @var EmailField|Fields
+//     */
+//    public EmailField $email;
+//    /**
+//     * @var Fields|PhoneField
+//     */
+//    public PhoneField $phone;
+//    /**
+//     * @var Fields|PasswordField
+//     */
+//    public PasswordField $password;
+//    /**
+//     * @var DateField|Fields
+//     */
+//    public DateField $date;
+//    /**
+//     * @var Fields|UrlField
+//     */
+//    public UrlField $url;
+//    /**
+//     * @var ChoiceField|Fields
+//     */
+//    public ChoiceField $select;
+//    /**
+//     * @var FloatField|IntegerField
+//     */
+//    public FloatField $float;
+//    /**
+//     * @var RangeField
+//     */
+//    public RangeField $range;
+//    /**
+//     * @var RadioField
+//     */
+//    public RadioField $radio;
+//    /**
+//     * @var CheckBoxField|Fields
+//     */
+//    public CheckBoxField $checkBox;
+//    /**
+//     * @var ResetButtonField
+//     */
+//    public ResetButtonField $reset;
+//    /**
+//     * @var BaseField|ButtonField
+//     */
+//    public ButtonField $button;
+//    /**
+//     * @var HiddenField
+//     */
+//    public HiddenField $hidden;
+//    /**
+//     * @var ColorField
+//     */
+//    public ColorField $color;
+//    /**
+//     * @var TextField
+//     */
+//    public TextField $textarea;
+//    /**
+//     * @var ImageField
+//     */
+//    public ImageField $photo;
+//    /**
+//     * @var DataListField
+//     */
+//    public DataListField $dataList;
+    public BooleanField $allow;
 
     /**
      * return null
@@ -119,14 +121,15 @@ class TestLoginForm extends Forms
      */
     protected function build(): void
     {
-        $this->age = $this->integerField()
-            ->label('Current age')
-            ->maxValue(120)
-            ->default(25)
-            ->step(1)
-            ->required(false);
-
-        $this->name = $this->charField()->regex("^[a-zA-Z ]*$")->required(false)->default('nameData');
+        $this->allow = $this->booleanField()->default(true);
+//        $this->age = $this->integerField()
+//            ->label('Current age')
+//            ->maxValue(120)
+//            ->default(25)
+//            ->step(1)
+//            ->required(false);
+//
+//        $this->name = $this->charField()->regex("^[a-zA-Z ]*$")->required(false)->default('nameData');
 
 //        $this->email = $this->emailField()
 //            ->required(true)
@@ -161,10 +164,10 @@ class TestLoginForm extends Forms
 //        $this->submit = $this->submitButtonField()
 //            ->type('submit');
 //
-        $this->float = $this
-            ->floatField()
-            ->step(0.3)
-        ->required(false);
+//        $this->float = $this
+//            ->floatField()
+//            ->step(0.3)
+//        ->required(false);
 //
 //        $this->range = $this->rangeField();
 
@@ -186,7 +189,7 @@ class TestLoginForm extends Forms
 //
 //        $this->textarea = $this->textField()->cols(40)->rows(5);
 
-        $this->photo = $this->imageField()->width(200)->height(10)->alt('image')->multiple(true);
+//        $this->photo = $this->imageField()->width(200)->height(10)->alt('image')->multiple(true);
 
 //        $this->dataList = $this->dataListField()->choices(['audi','benz','bmw','pagani']);
         

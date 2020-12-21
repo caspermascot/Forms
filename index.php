@@ -10,6 +10,7 @@ function newLine()
     echo '<br><br>';
 }
 
+echo '<pre>';
 //die(phpinfo());
 $form = new TestLoginForm();
 
@@ -40,8 +41,8 @@ print_r($form->asHtml());
 //echo '<pre>';
 //echo $form->photo;
 //
-newLine();
-var_dump($form->age->data(22));
+//newLine();
+//var_dump($form->age->data(22));
 
 
 //echo '<html>

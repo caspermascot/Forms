@@ -69,9 +69,11 @@ class Validator implements ValidatorsInterface
                 }
             }
 
-            if(empty($this->data) AND !$this instanceof IntegerField AND !$this instanceof BooleanField){
-                if($field->getProperty('allowBlank') === false){
-                    throw new ValidationFailedException(self::allowBlankErrorMessage);
+            if(empty($this->data)){
+                if(($this instanceof IntegerField OR !$this instanceof BooleanField) == false){
+                    if($field->getProperty('allowBlank') === false){
+                        throw new ValidationFailedException(self::allowBlankErrorMessage);
+                    }
                 }
             }
         }
@@ -125,7 +127,7 @@ class Validator implements ValidatorsInterface
      */
     private function booleanField(BooleanField $field): BooleanField
     {
-        if (!in_array(strtolower($this->data), [true, false, '1', '0', 'yes', 'no', 'ok'])) {
+        if (!in_array(strtolower($this->data), [true, false,'true','false','1', '0', 'yes', 'no', 'ok'])) {
             throw new ValidationFailedException('Invalid boolean value');
         }
 
