@@ -138,6 +138,7 @@ class Fields extends BaseField
      */
     public function default($data): self
     {
+        $this->required = false;
         $this->default = $data;
         $this->setData($data);
         return $this;
