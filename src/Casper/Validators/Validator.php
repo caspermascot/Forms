@@ -127,10 +127,12 @@ class Validator implements ValidatorsInterface
      */
     private function booleanField(BooleanField $field): BooleanField
     {
-        if (!in_array(strtolower($this->data), [true, false,'true','false','1', '0', 'yes', 'no', 'ok'])) {
-            throw new ValidationFailedException('Invalid boolean value');
+        if(!is_bool($this->data)){
+            if (!in_array(strtolower($this->data), ['true','false','1', '0', 'yes', 'no', 'ok'])) {
+                throw new ValidationFailedException('Invalid boolean value');
+            }
         }
-
+        
         $field->setCleanedData((bool) $this->data);
         return $field;
     }
