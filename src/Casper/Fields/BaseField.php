@@ -20,7 +20,7 @@ class BaseField
      */
     protected string $name;
 
-    protected $style;
+    protected ?string $style;
     /**
      * @param $name
      * @param $arguments
