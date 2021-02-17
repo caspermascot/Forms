@@ -107,17 +107,12 @@ class Fields extends BaseField
     public function getData()
     {
         $data = $this->getProperty('data');
-        if(empty($data))
-        {
-            // perhaps look in $_FILES
-            if(($this instanceof FileField or $this instanceof ImageField)){
-                $name = $this->getProperty('name');
-                if(!empty($name)){
-                    if(!empty($_FILES[$name]['name'][0])){
-                        $data = $_FILES[$name];
-                        $this->setData($data);
-                    }
-                }
+        // perhaps look in $_FILES
+        if(empty($data) && ($this instanceof FileField || $this instanceof ImageField)) {
+            $name = $this->getProperty('name');
+            if(!empty($name) && !empty($_FILES[$name]['name'][0])) {
+                $data = $_FILES[$name];
+                $this->setData($data);
             }
         }
         return $data;
@@ -326,20 +321,14 @@ class Fields extends BaseField
         $label = ucfirst($this->getProperty('label'));
         $res = str_replace('htmlLabel', "<label class='{$this->getProperty('style')}' for='{$name}'>{$label}</label> <br> ", $res);
 
-        if(!empty($this->getProperty('helpText')))
-        {
-            if($this->getProperty('isValid') == false){
-                $res = str_replace('helpText', "<br><span class=''>{$this->getProperty('helpText')}</span>", $res);
-            }
-            else{
-                $res = str_replace('helpText', '', $res);
-            }
-        }else{
+        if(!empty($this->getProperty('helpText')) && $this->getProperty('isValid') === false) {
+            $res = str_replace('helpText', "<br><span class=''>{$this->getProperty('helpText')}</span>", $res);
+        } else{
             $res = str_replace('helpText', '', $res);
         }
 
         $flag = true;
-        if($this instanceof Choices or $this instanceof TextField){
+        if($this instanceof Choices || $this instanceof TextField){
             $flag = false;
         }
 
@@ -398,10 +387,8 @@ class Fields extends BaseField
             $res .= 'autofocus="true" ';
         }
 
-        if(!empty($this->data)){
-            if(!is_array($this->data)){
-                $res .= "value='{$this->data}' ";
-            }
+        if(!empty($this->data) && !is_array($this->data)) {
+            $res .= "value='{$this->data}' ";
         }
 
         if(!empty($this->placeHolder)){
@@ -449,10 +436,8 @@ class Fields extends BaseField
             $response['example'] = $this->helpText;
         }
 
-        if(!empty($this->data)){
-            if(!is_array($this->data)){
-                $response['default'] = $this->data;
-            }
+        if(!empty($this->data) && !is_array($this->data)) {
+            $response['default'] = $this->data;
         }
 
         return $response;
