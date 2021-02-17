@@ -19,10 +19,8 @@ class BaseField
      * @var string
      */
     protected string $name;
-    /**
-     * @var string
-     */
-    protected string $style;
+
+    protected $style;
     /**
      * @param $name
      * @param $arguments
