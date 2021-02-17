@@ -203,8 +203,9 @@ class TestLoginForm extends Forms
     public function validate_name()
     {
         $data = $this->getData();
-        if(empty($data['name']))
+        if(empty($data['name'])) {
             throw new ValidationFailedException('invalid name');
+        }
 
         return $data['name'];
     }

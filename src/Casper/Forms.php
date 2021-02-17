@@ -98,7 +98,7 @@ abstract class Forms
         $this->fields = new FormFields();
         $this->build();
         $this->setUrl('');
-        $this->setMethod('post');
+        $this->setMethod();
         $this->validateFormCreate();
     }
 
@@ -112,12 +112,8 @@ abstract class Forms
         $this->default = $data;
         foreach (get_object_vars($this) as $key => $var)
         {
-            if($var instanceof Fields)
-            {
-                if(array_key_exists($key,$data))
-                {
-                    $var->default($data[$key]);
-                }
+            if(($var instanceof Fields) && array_key_exists($key, $data)) {
+                $var->default($data[$key]);
             }
         }
         return $this;
@@ -133,13 +129,9 @@ abstract class Forms
         $this->data = $data;
         foreach (get_object_vars($this) as $key => $var)
         {
-            if($var instanceof Fields)
-            {
-                if(array_key_exists($key, $data))
-                {
-                    $var->setName($key);
-                    $var->setData($data[$key]);
-                }
+            if(($var instanceof Fields) && array_key_exists($key, $data)) {
+                $var->setName($key);
+                $var->setData($data[$key]);
             }
         }
         $this->validate();
@@ -151,7 +143,7 @@ abstract class Forms
      */
     public function getData(): array
     {
-        $currData = isset($this->data) ? $this->data : [];
+        $currData = $this->data ?? [];
         $fieldsData = [];
         foreach (get_object_vars($this) as $key => $var){
             if($var instanceof Fields)
@@ -164,10 +156,8 @@ abstract class Forms
                     $fieldsData[$key] = $setData;
                 }
 
-                if(empty($fieldsData[$key])){
-                    if(!empty($setData = $var->getData())){
-                        $fieldsData[$key] = $setData;
-                    }
+                if(empty($fieldsData[$key]) && !empty($setData = $var->getData())) {
+                    $fieldsData[$key] = $setData;
                 }
             }
         }
@@ -196,10 +186,11 @@ abstract class Forms
      * @param string $method
      * @throws InvalidMethodException
      */
-    protected function setMethod(string $method='post')
+    protected function setMethod(string $method='post'): void
     {
-        if(!in_array(strtolower($method), ['get', 'post']))
+        if(!in_array(strtolower($method), ['get', 'post'])) {
             throw new InvalidMethodException();
+        }
 
         if(!isset($this->method))
         {
@@ -212,13 +203,15 @@ abstract class Forms
      * @throws InvalidUrlException
      * @throws Exceptions\FieldCreateFailedException
      */
-    private function validateFormCreate()
+    private function validateFormCreate(): void
     {
-        if(!isset($this->formUrlPath))
+        if(!isset($this->formUrlPath)) {
             throw new InvalidUrlException();
+        }
 
-        if(!isset($this->method))
+        if(!isset($this->method)) {
             throw new InvalidMethodException();
+        }
         $this->formName = FormUtils::getFieldType($this);
         foreach (get_object_vars($this) as $key => $var)
         {
@@ -233,15 +226,15 @@ abstract class Forms
     /**
      * @return string
      */
-    private function getStyle()
+    private function getStyle(): ?string
     {
-        return isset($this->style) ? $this->style : '';
+        return $this->style ?? '';
     }
 
     /**
      * @return string
      */
-    private function getUrl()
+    private function getUrl(): string
     {
         return $this->formUrlPath;
     }
@@ -249,7 +242,7 @@ abstract class Forms
     /**
      * @return string
      */
-    private function getMethod()
+    private function getMethod(): string
     {
         return $this->method;
     }
@@ -267,7 +260,7 @@ abstract class Forms
      * @param bool $hasFile
      * @return string
      */
-    private function getHtmlHeader(bool $hasFile = false)
+    private function getHtmlHeader(bool $hasFile = false): string
     {
         if($hasFile === true )
         {
@@ -314,7 +307,7 @@ abstract class Forms
      * @param bool $hasSubmit
      * @return string
      */
-    private function getHtmlBase(bool $hasSubmit = false)
+    private function getHtmlBase(bool $hasSubmit = false): string
     {
         if($hasSubmit === true){
             return "</form></div>";
@@ -325,7 +318,7 @@ abstract class Forms
     /**
      * @return array
      */
-    public function asJson()
+    public function asJson(): array
     {
         $response = [];
         foreach (get_object_vars($this) as $key => $var)
@@ -356,7 +349,7 @@ abstract class Forms
         $properties = [];
         foreach (get_object_vars($this) as $key => $var){
             if($var instanceof Fields){
-                if($var->getProperty('required') == true){
+                if($var->getProperty('required') === true){
                     $required[] = $key;
                 }
 
@@ -380,18 +373,16 @@ abstract class Forms
             $validationError = null;
             if($var instanceof Fields){
                 $validationError = $var->validate();
-                if(is_null($validationError)){
-                    if (method_exists($this, "validate_".$key)){
-                        try{
-                            $cleanedData = call_user_func([$this, "validate_".$key], []);
-                            $var->setCleanedData($cleanedData);
-                        }
-                        catch (ValidationFailedException $exception){
-                            $validationError = $exception->getMessage();
-                        }
-                        catch (Exception $exception){
-                            throw new Exception($exception->getMessage());
-                        }
+                if(is_null($validationError) && method_exists($this, "validate_" . $key)) {
+                    try{
+                        $cleanedData = call_user_func([$this, "validate_".$key], []);
+                        $var->setCleanedData($cleanedData);
+                    }
+                    catch (ValidationFailedException $exception){
+                        $validationError = $exception->getMessage();
+                    }
+                    catch (Exception $exception){
+                        throw new Exception($exception->getMessage());
                     }
                 }
 
@@ -443,7 +434,7 @@ abstract class Forms
         if(!is_null($data)){
             return $this->cleanedData[$data] ?? null;
         }
-        return isset($this->cleanedData) ? $this->cleanedData : [];
+        return $this->cleanedData ?? [];
     }
 
     /**
@@ -451,7 +442,7 @@ abstract class Forms
      * @return array|mixed|null
      * @throws FormNotValidatedException
      */
-    public function getErrors(string $data=null)
+    public function getErrors(string $data=null): ?array
     {
         if(!isset($this->validated)){
             throw new FormNotValidatedException();
@@ -460,7 +451,7 @@ abstract class Forms
         if(!is_null($data)){
             return $this->errors[$data] ?? null;
         }
-        return isset($this->errors) ? $this->errors : [];
+        return $this->errors ?? [];
     }
 
     /**

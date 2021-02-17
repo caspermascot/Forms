@@ -9,7 +9,7 @@ use Casper\FormUtils;
 
 class BaseField
 {
-    const MESSAGE = 'Cannot set required to true when a default is provided, On field %s of form %s ';
+    public const MESSAGE = 'Cannot set required to true when a default is provided, On field %s of form %s ';
 
     /**
      * @var string|null
@@ -19,6 +19,10 @@ class BaseField
      * @var string
      */
     protected string $name;
+    /**
+     * @var string
+     */
+    protected string $style;
     /**
      * @param $name
      * @param $arguments
@@ -40,7 +44,7 @@ class BaseField
     public function getProperty(string $property)
     {
         if(property_exists($this, $property)){
-            return isset($this->$property) ? $this->$property : null;
+            return $this->$property ?? null;
         }
         return null;
     }
@@ -52,7 +56,7 @@ class BaseField
     public function asHtml(string $name = ''): string
     {
         if(empty($name)){
-            $name = $this->getProperty('name');
+            $this->name = (string) $this->getProperty('name');
         }
         return " <div class='{$this->getProperty('style')}'> <br> <span> htmlLabel htmlField helpText </span> </div> ";
     }
@@ -107,10 +111,8 @@ class BaseField
     {
         $name = $this->getProperty('name');
 
-        if($this instanceof Fields){
-            if(!empty($this->required) and !empty($this->default)){
-                throw new FieldCreateFailedException(sprintf(self::MESSAGE, $name, $caller));
-            }
+        if(($this instanceof Fields) && !empty($this->required) && !empty($this->default)) {
+            throw new FieldCreateFailedException(sprintf(self::MESSAGE, $name, $caller));
         }
 
         if(empty($this->getProperty('label'))){

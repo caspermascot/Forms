@@ -34,8 +34,6 @@ use Exception;
 
 class Validator implements ValidatorsInterface
 {
-
-
     private const requiredErrorMessage = 'This field is required';
     private const allowNullErrorMessage = 'This field cannot be null';
     private const allowBlankErrorMessage = 'This field cannot be empty';
@@ -56,25 +54,17 @@ class Validator implements ValidatorsInterface
     {
         $this->data = $this->getData($field);
 
-        if(!isset($this->data)){
-            if($field->getProperty('required') === true){
-                throw new ValidationFailedException(self::requiredErrorMessage);
-            }
+        if(!isset($this->data) && $field->getProperty('required') === true) {
+            throw new ValidationFailedException(self::requiredErrorMessage);
         }
     
         if(isset($this->data)){
-            if(is_null($this->data)){
-                if($field->getProperty('allowNull') === false){
-                    throw new ValidationFailedException(self::allowNullErrorMessage);
-                }
+            if(is_null($this->data) && $field->getProperty('allowNull') === false) {
+                throw new ValidationFailedException(self::allowNullErrorMessage);
             }
-
-            if(empty($this->data)){
-                if(($this instanceof IntegerField OR !$this instanceof BooleanField) == false){
-                    if($field->getProperty('allowBlank') === false){
-                        throw new ValidationFailedException(self::allowBlankErrorMessage);
-                    }
-                }
+            
+            if(empty($this->data) && (($this instanceof IntegerField || !$this instanceof BooleanField) === false) && $field->getProperty('allowBlank') === false) {
+                throw new ValidationFailedException(self::allowBlankErrorMessage);
             }
         }
 
@@ -84,7 +74,7 @@ class Validator implements ValidatorsInterface
             }
 
             $regex = '/'.trim($regex,'/').'/';
-            if (is_string($regex) and !preg_match("{$regex}", $this->data)) {
+            if (is_string($regex) && !preg_match(($regex), $this->data)) {
                 throw new ValidationFailedException(sprintf(self::regexErrorMessage,$regex));
             }
         }
@@ -106,15 +96,12 @@ class Validator implements ValidatorsInterface
     private function getData(Fields $field)
     {
         $data = $field->getProperty('data');
-        if(empty($data))
-        {
-            // perhaps look in $_FILES
-            if(($field instanceof FileField or $field instanceof ImageField)){
-                $name = $field->getProperty('name');
-                if(!empty($_FILES[$name]['name'][0])){
-                    $data = $_FILES[$name];
-                    $field->setData($data);
-                }
+        // perhaps look in $_FILES
+        if(empty($data) && ($field instanceof FileField || $field instanceof ImageField)) {
+            $name = $field->getProperty('name');
+            if(!empty($_FILES[$name]['name'][0])){
+                $data = $_FILES[$name];
+                $field->setData($data);
             }
         }
         return $data;
@@ -127,10 +114,8 @@ class Validator implements ValidatorsInterface
      */
     private function booleanField(BooleanField $field): BooleanField
     {
-        if(!is_bool($this->data)){
-            if (!in_array(strtolower($this->data), ['true','false','1', '0', 'yes', 'no', 'ok'])) {
-                throw new ValidationFailedException('Invalid boolean value');
-            }
+        if(!is_bool($this->data) && !in_array(strtolower($this->data), ['true', 'false', '1', '0', 'yes', 'no', 'ok'])) {
+            throw new ValidationFailedException('Invalid boolean value');
         }
         
         $field->setCleanedData((bool) $this->data);
@@ -185,7 +170,7 @@ class Validator implements ValidatorsInterface
 
         if(isset($choices)){
             foreach ($choiceOptions as $key => $value){
-                if(!in_array($value, $choices)){
+                if(!in_array($value, $choices, true)){
                     throw new ValidationFailedException(sprintf("{$value} is not a valid option for this field, supported options are [' %s '] ", implode(',',$choices)));
                 }
             }
@@ -215,7 +200,7 @@ class Validator implements ValidatorsInterface
      */
     private function dataListField(DataListField $field): DataListField
     {
-        if($field->getProperty('allowNewContent') == false){
+        if($field->getProperty('allowNewContent') === false){
             $field->setCleanedData($this->validateChoiceOptions($field));
         }else{
             // no point in validating this
@@ -251,17 +236,13 @@ class Validator implements ValidatorsInterface
     private function validateDate(DateField $field): void
     {
         $minValue = $field->getProperty('minValue');
-        if(isset($minValue)){
-            if(strtotime($minValue) < strtotime($this->data) ){
-                throw new ValidationFailedException("Value cannot be less than {$minValue}");
-            }
+        if(isset($minValue) && strtotime($minValue) < strtotime($this->data)) {
+            throw new ValidationFailedException("Value cannot be less than {$minValue}");
         }
 
         $maxValue = $field->getProperty('maxValue');
-        if(isset($maxValue)){
-            if(strtotime($this->data) > strtotime($maxValue)){
-                throw new ValidationFailedException("Value cannot be greater than {$maxValue}");
-            }
+        if(isset($maxValue) && strtotime($this->data) > strtotime($maxValue)) {
+            throw new ValidationFailedException("Value cannot be greater than {$maxValue}");
         }
     }
 
@@ -317,21 +298,17 @@ class Validator implements ValidatorsInterface
     {
         $multiple = $field->getProperty('multiple');
 
-        if($multiple == true){
+        if($multiple === true){
             $count = count($this->data['size']);
             $minSize = $field->getProperty('minSize');
-            for($index = 0; $index < $count; $index+=1) {
-                if (isset($minSize)) {
-                    if ($this->data["size"][$index] < $minSize) {
-                        throw new ValidationFailedException(sprintf("Size cannot be less than %s mb", $minSize/1000000));
-                    }
+            for($index = 0; $index < $count; ++$index) {
+                if (isset($minSize) && $this->data["size"][$index] < $minSize) {
+                    throw new ValidationFailedException(sprintf("Size cannot be less than %s mb", $minSize/1000000));
                 }
 
                 $maxSize = $field->getProperty('maxSize');
-                if (isset($maxSize)) {
-                    if ($this->data["size"][$index] > $maxSize) {
-                        throw new ValidationFailedException(sprintf("Size cannot be greater than %s mb", $maxSize/1000000));
-                    }
+                if (isset($maxSize) && $this->data["size"][$index] > $maxSize) {
+                    throw new ValidationFailedException(sprintf("Size cannot be greater than %s mb", $maxSize/1000000));
                 }
 
                 $type = $field->getProperty('type');
@@ -341,24 +318,20 @@ class Validator implements ValidatorsInterface
                     $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
                     $type = array_values($type);
-                    if (!in_array(strtolower($fileType), $type)) {
+                    if (!in_array(strtolower($fileType), $type, true)) {
                         throw new ValidationFailedException("Unsupported type given. Must be one of ( " . implode($type) . " )");
                     }
                 }
             }
         }else{
             $minSize = $field->getProperty('minSize');
-            if(isset($minSize)){
-                if($this->data["size"] < $minSize){
-                    throw new ValidationFailedException("Size cannot be less than {$minSize}");
-                }
+            if(isset($minSize) && $this->data["size"] < $minSize) {
+                throw new ValidationFailedException("Size cannot be less than {$minSize}");
             }
 
             $maxSize = $field->getProperty('maxSize');
-            if(isset($maxSize)){
-                if($this->data["size"] > $maxSize){
-                    throw new ValidationFailedException("Size cannot be greater than {$maxSize}");
-                }
+            if(isset($maxSize) && $this->data["size"] > $maxSize) {
+                throw new ValidationFailedException("Size cannot be greater than {$maxSize}");
             }
 
             $type = $field->getProperty('type');
@@ -368,7 +341,7 @@ class Validator implements ValidatorsInterface
                 $fileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 
                 $type = array_values($type);
-                if(!in_array(strtolower($fileType), $type)){
+                if(!in_array(strtolower($fileType), $type, true)){
                     throw new ValidationFailedException("Unsupported type given. Must be one of ( ".implode($type)." )");
                 }
             }
@@ -418,10 +391,10 @@ class Validator implements ValidatorsInterface
     private function imageField(ImageField $field): ImageField
     {
         $multiple = $field->getProperty('multiple');
-        if($multiple == true){
+        if($multiple === true){
             $count = count($this->data['tmp_name']);
 
-            for($index = 0; $index < $count; $index+=1){
+            for($index = 0; $index < $count; ++$index){
                 try{
                     if(empty($this->data["tmp_name"][$index])){
                         $check = false;
@@ -432,7 +405,7 @@ class Validator implements ValidatorsInterface
                     $check = false;
                 }
 
-                if($check == false) {
+                if($check === false) {
                     throw new ValidationFailedException('File is not an image');
                 }
             }
@@ -447,7 +420,7 @@ class Validator implements ValidatorsInterface
                 $check = false;
             }
 
-            if($check == false) {
+            if($check === false) {
                 throw new ValidationFailedException('File is not an image');
             }
         }
@@ -464,13 +437,14 @@ class Validator implements ValidatorsInterface
      */
     private function integerField(IntegerField $field): IntegerField
     {
-        if (!is_numeric($this->data) or is_numeric(strpos($this->data, '.'))) {
+        if (!is_numeric($this->data) || is_numeric(strpos($this->data, '.'))) {
             throw new ValidationFailedException('Invalid integer value');
         }
 
         $this->checkMinValue($field->getProperty('minValue'), $this->data);
         $this->checkMaxValue($field->getProperty('maxValue'), $this->data);
 
+        $this->data /= 1;
         $field->setCleanedData((int) $this->data);
         return $field;
     }
@@ -482,10 +456,8 @@ class Validator implements ValidatorsInterface
      */
     private function checkMinValue($minValue, $data): void
     {
-        if(isset($minValue)){
-            if($data < $minValue){
-                throw new ValidationFailedException("Value cannot be less than {$minValue}");
-            }
+        if(isset($minValue) && $data < $minValue) {
+            throw new ValidationFailedException("Value cannot be less than {$minValue}");
         }
     }
 
@@ -496,10 +468,8 @@ class Validator implements ValidatorsInterface
      */
     private function checkMaxValue($maxValue, $data): void
     {
-        if(isset($maxValue)) {
-            if ($data > $maxValue) {
-                throw new ValidationFailedException("Value cannot be greater than {$maxValue}");
-            }
+        if(isset($maxValue) && $data > $maxValue) {
+            throw new ValidationFailedException("Value cannot be greater than {$maxValue}");
         }
     }
 
@@ -510,10 +480,8 @@ class Validator implements ValidatorsInterface
      */
     private function checkMinLength($minLength, $data): void
     {
-        if(isset($minLength)){
-            if(strlen($data) < $minLength){
-                throw new ValidationFailedException("Value cannot be have length less than {$minLength}");
-            }
+        if(isset($minLength) && strlen($data) < $minLength) {
+            throw new ValidationFailedException("Value cannot be have length less than {$minLength}");
         }
     }
 
@@ -524,10 +492,8 @@ class Validator implements ValidatorsInterface
      */
     private function checkMaxLength($maxLength, $data): void
     {
-        if(isset($maxLength)){
-            if(strlen($data) > $maxLength){
-                throw new ValidationFailedException("Value cannot be have length more than {$maxLength}");
-            }
+        if(isset($maxLength) && strlen($data) > $maxLength) {
+            throw new ValidationFailedException("Value cannot be have length more than {$maxLength}");
         }
     }
 
@@ -546,28 +512,20 @@ class Validator implements ValidatorsInterface
         $number = $field->getProperty('number');
         $symbol = $field->getProperty('symbol');
 
-        if(isset($upper)){
-            if(!preg_match( '/[A-Z]/', $this->data )){
-                throw new ValidationFailedException("Value must contain an upper case. ");
-            }
+        if(isset($upper) && !preg_match('/[A-Z]/', $this->data)) {
+            throw new ValidationFailedException("Value must contain an upper case. ");
         }
 
-        if(isset($lower)){
-            if(!preg_match( '/[a-z]/', $this->data )){
-                throw new ValidationFailedException("Value must contain a lower case. ");
-            }
+        if(isset($lower) && !preg_match('/[a-z]/', $this->data)) {
+            throw new ValidationFailedException("Value must contain a lower case. ");
         }
 
-        if(isset($number)){
-            if(!preg_match( '/\d/', $this->data )){
-                throw new ValidationFailedException("Value must contain a numeric character. ");
-            }
+        if(isset($number) && !preg_match('/\d/', $this->data)) {
+            throw new ValidationFailedException("Value must contain a numeric character. ");
         }
 
-        if(isset($symbol)){
-            if(!preg_match( '/[^a-zA-Z\d]/', $this->data )){
-                throw new ValidationFailedException("Value must contain a symbol. ");
-            }
+        if(isset($symbol) && !preg_match('/[^a-zA-Z\d]/', $this->data)) {
+            throw new ValidationFailedException("Value must contain a symbol. ");
         }
 
         $field->setCleanedData((string) $this->data);
@@ -583,10 +541,8 @@ class Validator implements ValidatorsInterface
     {
         $internationalize = $field->getProperty('internationalize');
 
-        if(isset($internationalize)){
-            if(mb_substr($this->data, 0, 2) != '00' and mb_substr($this->data, 0, 1) != '+'){
-                throw new ValidationFailedException("Value must be in international format. ");
-            }
+        if(isset($internationalize) && mb_substr($this->data, 0, 2) !== '00' && mb_substr($this->data, 0, 1) !== '+') {
+            throw new ValidationFailedException("Value must be in international format. ");
         }
 
         if (!preg_match("/^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/", $this->data)) {
