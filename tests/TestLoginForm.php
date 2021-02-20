@@ -122,18 +122,18 @@ class TestLoginForm extends Forms
     protected function build(): void
     {
         $this->allow = $this->booleanField()->default(true);
-//        $this->age = $this->integerField()
-//            ->label('Current age')
-//            ->maxValue(120)
-//            ->default(25)
-//            ->step(1)
-//            ->required(false);
-//
-//        $this->name = $this->charField()->regex("^[a-zA-Z ]*$")->required(false)->default('nameData');
+        $this->age = $this->integerField()
+            ->label('Current age')
+            ->maxValue(120)
+            ->minValue(5)
+            ->default(25)
+            ->step(1)
+            ->required(false);
+        $this->name = $this->charField()->regex("^[a-zA-Z ]*$")->required(false)->default('nameData');
 
-//        $this->email = $this->emailField()
-//            ->required(true)
-//            ->customErrorMessages('invalid email address');
+        $this->email = $this->emailField()
+            ->required(true)
+            ->customErrorMessages('invalid email address');
 //
 //        $this->url = $this->urlField()->required(true);
 //
@@ -164,10 +164,10 @@ class TestLoginForm extends Forms
 //        $this->submit = $this->submitButtonField()
 //            ->type('submit');
 //
-//        $this->float = $this
-//            ->floatField()
-//            ->step(0.3)
-//        ->required(false);
+        $this->float = $this
+            ->floatField()
+            ->step(0.3)
+        ->required(false);
 //
 //        $this->range = $this->rangeField();
 
@@ -185,13 +185,17 @@ class TestLoginForm extends Forms
 //
 //        $this->hidden = $this->hiddenField();
 //
-//        $this->color = $this->colorField();
+        $this->color = $this->colorField();
 //
 //        $this->textarea = $this->textField()->cols(40)->rows(5);
 
-//        $this->photo = $this->imageField()->width(200)->height(10)->alt('image')->multiple(true);
+        $this->photo = $this->imageField()->width(200)->height(10)
+            ->alt('image')->multiple(true)
+                ->maxSize(150)
+        ->type(['png','jpg']);
 
-//        $this->dataList = $this->dataListField()->choices(['audi','benz','bmw','pagani']);
+        $this->dataList = $this->dataListField()->choices(['audi','benz','bmw','pagani'])->allowNewContent(false);
+
         
         $this->setUrl('/forms/');
     }

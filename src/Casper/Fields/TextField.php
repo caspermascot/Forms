@@ -4,6 +4,8 @@
 namespace Casper\Fields;
 
 
+use Casper\Exceptions\ValidationFailedException;
+
 class TextField extends Fields
 {
     /**
@@ -103,5 +105,35 @@ class TextField extends Fields
 
         $res = str_replace('htmlField', $field, $res);
         return $res;
+    }
+
+    public function validate(): ?string
+    {
+        try {
+            $this->checkRequired($this->data);
+            $this->checkNull($this->data);
+            $this->checkBlank($this->data);
+            $this->checkEmpty($this->data);
+
+            if(!empty($this->data)){
+                if(isset($this->regex)){
+                    $this->checkRegex($this->regex, $this->data);
+                }
+                if(isset($this->minLength)){
+                    $this->checkMinLength($this->minLength, $this->data);
+                }
+                if(isset($this->maxLength)){
+                    $this->checkMaxLength($this->maxLength, $this->data);
+                }
+                $this->setCleanedData((string) $this->data);
+            }
+
+            $this->isValid = true;
+            return null;
+
+        }catch (ValidationFailedException $validationFailedException){
+            $this->isValid = false;
+            return $validationFailedException->getMessage();
+        }
     }
 }

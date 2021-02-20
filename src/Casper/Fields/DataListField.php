@@ -4,6 +4,8 @@
 namespace Casper\Fields;
 
 
+use Casper\Exceptions\ValidationFailedException;
+
 class DataListField extends Choices
 {
     /**
@@ -37,7 +39,7 @@ class DataListField extends Choices
      */
     public function asHtml(string $name=''): string
     {
-        $res = parent::getParentHtml($name);
+        $res = $this->getParentHtml($name);
         $fieldHtml = $this->getFieldHtml();
         $field = "<input type='text' list='{$name}' {$fieldHtml} >";
         $field .= "<datalist id='{$name}' >";
@@ -58,5 +60,33 @@ class DataListField extends Choices
     public function getParentHtml(string $name): string
     {
         return parent::asHtml($name);
+    }
+
+    public function validate(): ?string
+    {
+        if($this->allowNewContent === true){
+
+            try {
+//                $this->checkEmpty($this->data);
+                $this->checkRequired($this->data);
+                $this->checkNull($this->data);
+                $this->checkBlank($this->data);
+                if(!empty($this->data)){
+                    $choiceOptions = is_array($this->data) ? $this->data : explode(',',$this->data);
+                    $this->setCleanedData(implode(',',$choiceOptions));
+                }
+
+                $this->isValid = true;
+                return null;
+
+            }catch (ValidationFailedException $validationFailedException){
+                $this->isValid = false;
+                return $validationFailedException->getMessage();
+            }
+
+        }else{
+            return parent::validate();
+        }
+
     }
 }

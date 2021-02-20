@@ -13,9 +13,9 @@ class BaseButtonField extends BaseField
      */
     protected string $type = 'submit';
     /**
-     * @var string
+     * @var string|null
      */
-    protected string $style;
+    protected ?string $style;
 
     /**
      * @param string $type
@@ -39,11 +39,12 @@ class BaseButtonField extends BaseField
     public function asHtml(string $name=''): string
     {
         $res = parent::asHtml($name);
-        $res = str_replace('htmlLabel', '', $res);
-        $res = str_replace('helpText', '', $res);
-        $field = " <br> <input class='{$this->getProperty('style')}' type='{$this->getProperty('type')}' value='{$this->getProperty('label')}'> ";
-        $res = str_replace('htmlField', $field, $res);
-        $res = str_replace('<br>', '', $res);
+        $res = str_replace(array('htmlLabel', 'helpText'), '', $res);
+        $field = " <br> <input 
+                            class='{$this->getProperty('style')}' 
+                            type='{$this->getProperty('type')}' 
+                            value='{$this->getProperty('label')}'> ";
+        $res = str_replace(array('htmlField', '<br>'), array($field, ''), $res);
         return $res;
     }
 

@@ -373,6 +373,10 @@ abstract class Forms
             $validationError = null;
             if($var instanceof Fields){
                 $validationError = $var->validate();
+                if(is_null($validationError)){
+                    $validationError = $var->runCustomValidation();
+                }
+
                 if(is_null($validationError) && method_exists($this, "validate_" . $key)) {
                     try{
                         $cleanedData = call_user_func([$this, "validate_".$key], []);

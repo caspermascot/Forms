@@ -4,8 +4,14 @@
 namespace Casper\Fields;
 
 
+use Casper\Exceptions\ValidationFailedException;
+
 class PasswordField extends CharField
 {
+    private const numberErrorMessage = 'Value must contain a numeric character. ';
+    private const symbolErrorMessage = 'Value must contain a symbol. ';
+    private const upperCaseErrorMessage = 'Value must contain an upper case. ';
+    private const lowerCaseErrorMessage = 'Value must contain a lower case. ';
     /**
      * @var bool
      */
@@ -86,5 +92,44 @@ class PasswordField extends CharField
         $res = parent::asHtml($name);
         $res = str_replace("type='text'", "type='password'", $res);
         return $res;
+    }
+
+
+    public function validate(): ?string
+    {
+        try {
+            $this->checkRequired($this->data);
+            $this->checkNull($this->data);
+            $this->checkBlank($this->data);
+            $this->checkEmpty($this->data);
+
+            if(!empty($this->data)){
+                $this->baseCharFieldCheck();
+                if(isset($this->upper) && !preg_match('/[A-Z]/', $this->data)) {
+                    throw new ValidationFailedException(self::upperCaseErrorMessage);
+                }
+
+                if(isset($this->lower) && !preg_match('/[a-z]/', $this->data)) {
+                    throw new ValidationFailedException(self::lowerCaseErrorMessage);
+                }
+
+                if(isset($this->number) && !preg_match('/\d/', $this->data)) {
+                    throw new ValidationFailedException(self::numberErrorMessage);
+                }
+
+                if(isset($this->symbol) && !preg_match('/[^a-zA-Z\d]/', $this->data)) {
+                    throw new ValidationFailedException(self::symbolErrorMessage);
+                }
+
+                $this->setCleanedData((string) $this->data);
+            }
+
+            $this->isValid = true;
+            return null;
+
+        }catch (ValidationFailedException $validationFailedException){
+            $this->isValid = false;
+            return $validationFailedException->getMessage();
+        }
     }
 }

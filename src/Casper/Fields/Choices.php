@@ -5,10 +5,13 @@ namespace Casper\Fields;
 
 
 use Casper\Exceptions\FieldCreateFailedException;
+use Casper\Exceptions\ValidationFailedException;
 use Casper\FormUtils;
 
 class Choices extends Fields
 {
+    private const MISSING_CHOICES_MESSAGES = 'Missing required parameter choices, On field %s of form %s ';
+
     /**
      * @var array
      */
@@ -34,9 +37,8 @@ class Choices extends Fields
         $name = $this->getProperty('name');
 
         if(empty($this->choices)){
-            $message = 'Missing required parameter choices, On field %s of form %s ';
-
-            throw new FieldCreateFailedException(sprintf($message, $name, $caller));
+            throw new FieldCreateFailedException(sprintf(self::MISSING_CHOICES_MESSAGES
+                , $name, $caller));
         }
     }
     /**
@@ -75,24 +77,21 @@ class Choices extends Fields
      * @param int $count
      * @param string $label
      * @param string $choice
-     * @param null $key
      * @param string $type
      * @param bool $multiple
      * @return string
      */
-    protected function getChoiceHtmlData(Choices $choices, array $data, int $count, string $label, string $choice, $key=null, string $type='radio', bool $multiple=false): string
+    protected function getChoiceHtmlData(Choices $choices, array $data, int $count, string $label, string $choice, string $type='radio', bool $multiple=false): string
     {
         $temp = "<input type='{$type}' value='{$choice}' ";
 
-        $temp .= !in_array($choice, $data) ? '' : 'checked="true" ';
+        $temp .= !in_array($choice, $data, true) ? '' : 'checked="true" ';
         $temp .= empty($choices->required) ? '' : 'required="true" ';
         $temp .= empty($choices->hidden) ? '' : 'hidden="true" ';
         $temp .= empty($choices->disabled) ? '' : 'disabled="true" ';
 
-        if(!empty($choices->autoFocus)){
-            if($count == 0){
-                $temp .= 'autoFocus="true" ';
-            }
+        if(!empty($choices->autoFocus) && $count === 0) {
+            $temp .= 'autoFocus="true" ';
         }
         if(!empty($choices->name)){
             $temp .= ($multiple === true) ? " name='{$choices->name}[]' ":" name='{$choices->name}' ";
@@ -112,5 +111,27 @@ class Choices extends Fields
         $res['enum'] = $this->choices;
 
         return $res;
+    }
+
+    public function validate(): ?string
+    {
+        try {
+//            $this->checkEmpty($this->data);
+            $this->checkRequired($this->data);
+            $this->checkNull($this->data);
+            $this->checkBlank($this->data);
+
+            if(!empty($this->data)){
+                $this->validateChoiceOptions($this->choices, $this->data);
+                $this->setCleanedData((string) $this->data);
+            }
+
+            $this->isValid = true;
+            return null;
+
+        }catch (ValidationFailedException $validationFailedException){
+            $this->isValid = false;
+            return $validationFailedException->getMessage();
+        }
     }
 }

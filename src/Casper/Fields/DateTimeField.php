@@ -27,4 +27,9 @@ class DateTimeField extends DateField
 
         return $res;
     }
+
+    public function setCleanedData($data): Fields
+    {
+        return parent::setCleanedData(date('c', strtotime($this->data)));
+    }
 }

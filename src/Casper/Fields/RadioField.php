@@ -21,14 +21,14 @@ class RadioField extends Choices
         if(FormUtils::isMultiDimensional($this->choices)){
             foreach ($this->choices as $key => $choice){
                 $label = ucfirst($key);
-                $field.= $this->getChoiceHtmlData($this, $data, $count, $label, $choice, $key);
-                $count+=1;
+                $field.= $this->getChoiceHtmlData($this, $data, $count, $label, $choice);
+                ++$count;
             }
         }else{
             foreach ($this->choices as $key => $choice){
                 $label = ucfirst($choice);
-                $field.= $this->getChoiceHtmlData($this, $data, $count, $label, $choice, null);
-                $count+=1;
+                $field.= $this->getChoiceHtmlData($this, $data, $count, $label, $choice);
+                ++$count;
             }
         }
         $res = str_replace('htmlField', $field, $res);
