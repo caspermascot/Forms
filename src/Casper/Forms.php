@@ -429,7 +429,7 @@ abstract class Forms
      * @return array|mixed|null
      * @throws FormNotValidatedException
      */
-    public function getCleanedData(string $data=null)
+    public function getCleanedData(string $data=null): ?array
     {
         if(!isset($this->validated)){
             throw new FormNotValidatedException();
