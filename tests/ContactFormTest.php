@@ -41,6 +41,6 @@ class ContactFormTest extends FormTestCase
             'contactType' => 'enquiry'
         ];
         $form->setData($testData);
-        self::assertNotTrue($form->isValid(),'contact form with null email is valid');
+        self::assertTrue($form->isValid(),'contact form with null email is valid');
     }
 }
