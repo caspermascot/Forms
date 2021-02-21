@@ -11,7 +11,7 @@ class PhoneField extends CharField
 
     private const phoneFormat = "/^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/";
     private const internationalFormatErrorMessage = 'Value must be in international format. ';
-    private const invalidPhoneErrorMessage = 'Invalid phone format. ';
+    private const invalidPhoneErrorMessage = 'Invalid phone number. ';
 
 
     protected bool $internationalize;

@@ -38,6 +38,7 @@ use Casper\Fields\TimeField;
 use Casper\Fields\UrlField;
 use Casper\Fields\UuidField;
 use Exception;
+use RuntimeException;
 
 abstract class Forms
 {
@@ -379,14 +380,14 @@ abstract class Forms
 
                 if(is_null($validationError) && method_exists($this, "validate_" . $key)) {
                     try{
-                        $cleanedData = call_user_func([$this, "validate_".$key], []);
+                        $cleanedData = $this->{"validate_" . $key}();
                         $var->setCleanedData($cleanedData);
                     }
                     catch (ValidationFailedException $exception){
                         $validationError = $exception->getMessage();
                     }
                     catch (Exception $exception){
-                        throw new Exception($exception->getMessage());
+                        throw new RuntimeException($exception->getMessage());
                     }
                 }
 

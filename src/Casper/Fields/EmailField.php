@@ -8,7 +8,7 @@ use Casper\Exceptions\ValidationFailedException;
 
 class EmailField extends Fields
 {
-    private const emailErrorMessage = 'Invalid email format';
+    private const emailErrorMessage = 'Invalid email address';
     /**
      * @param string $name
      * @return string
