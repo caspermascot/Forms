@@ -7,7 +7,7 @@ namespace FormTests;
 class FieldsFormTest extends FormTestCase
 {
 
-    public function testSubmitButtonField()
+    public function testSubmitButtonField(): void
     {
         $form = $this->getTestForm();
         $submitButton = $form->submitButtonField();
@@ -15,7 +15,7 @@ class FieldsFormTest extends FormTestCase
         self::assertStringContainsString("type='submit'", $submitButton->asHtml());
     }
 
-    public function testCreateChoiceField()
+    public function testCreateChoiceField(): void
     {
         $form = $this->getTestForm();
         $choice = $form->choiceField()->multiple(true)->choices(['a' => 1,'b' => 2,'c' => 3,'d' => 4]);

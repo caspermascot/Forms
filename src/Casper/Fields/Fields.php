@@ -10,9 +10,9 @@ use Exception;
 
 abstract class Fields extends BaseField
 {
-    private const requiredErrorMessage = 'This is required';
-    private const allowNullErrorMessage = 'This cannot be null';
-    private const allowBlankErrorMessage = 'This cannot be empty';
+    private const requiredErrorMessage = "This is required. ";
+    private const allowNullErrorMessage = "This cannot be null. ";
+    private const allowBlankErrorMessage = "This cannot be empty. ";
     private const regexErrorMessage = "The given value does not match the pattern %s ";
     private const minValueErrorMessage = "Value cannot be less than %s ";
     private const maxValueErrorMessage = "Value cannot be greater than %s ";
@@ -116,6 +116,9 @@ abstract class Fields extends BaseField
      */
     public function getData()
     {
+        if(isset($this->isValid) && $this->isValid){
+            return $this->data();
+        }
         $data = $this->getProperty('data');
         // perhaps look in $_FILES
         if(empty($data) && ($this instanceof FileField || $this instanceof ImageField)) {
@@ -128,6 +131,10 @@ abstract class Fields extends BaseField
         return $data;
     }
 
+    /**
+     * @param null $data
+     * @return mixed|null
+     */
     public function data($data=null)
     {
         if(!is_null($data)){
@@ -300,6 +307,17 @@ abstract class Fields extends BaseField
     }
 
     abstract public function validate(): ?string;
+
+    /**
+     * @param string $errorMessage
+     */
+    protected function setValidationErrorMessage(string $errorMessage): void
+    {
+        if(isset($this->customErrorMessage)){
+            $this->setErrorMessage($this->customErrorMessage);
+        }
+        $this->setErrorMessage($errorMessage);
+    }
 
     /**
      *
@@ -488,7 +506,7 @@ abstract class Fields extends BaseField
      */
     protected function checkEmpty($value): void
     {
-        if($this->required === false && empty($value) ) {
+        if($this->required === true && empty($value) ) {
             throw new ValidationFailedException(self::requiredErrorMessage);
         }
     }
@@ -523,7 +541,7 @@ abstract class Fields extends BaseField
      * @param $data
      * @throws ValidationFailedException
      */
-    public function checkMinValue($minValue, $data): void
+    protected function checkMinValue($minValue, $data): void
     {
         if($data < $minValue) {
             throw new ValidationFailedException(sprintf(self::minValueErrorMessage,$minValue));
@@ -535,7 +553,7 @@ abstract class Fields extends BaseField
      * @param $data
      * @throws ValidationFailedException
      */
-    public function checkMaxValue($maxValue, $data): void
+    protected function checkMaxValue($maxValue, $data): void
     {
         if($data > $maxValue) {
             throw new ValidationFailedException(sprintf(self::maxValueErrorMessage,$maxValue));
@@ -547,7 +565,7 @@ abstract class Fields extends BaseField
      * @param $data
      * @throws ValidationFailedException
      */
-    public function checkMinLength($minLength, $data): void
+    protected function checkMinLength($minLength, $data): void
     {
         if(strlen($data) < $minLength) {
             throw new ValidationFailedException(sprintf(self::minLengthErrorMessage, $minLength));
@@ -559,7 +577,7 @@ abstract class Fields extends BaseField
      * @param $data
      * @throws ValidationFailedException
      */
-    public function checkMaxLength($maxLength, $data): void
+    protected function checkMaxLength($maxLength, $data): void
     {
         if(strlen($data) > $maxLength) {
             throw new ValidationFailedException(sprintf(self::maxLengthErrorMessage, $maxLength));
@@ -572,7 +590,7 @@ abstract class Fields extends BaseField
      * @return string|null
      * @throws ValidationFailedException
      */
-    public function validateChoiceOptions($choices, $data): ?string
+    protected function validateChoiceOptions($choices, $data): ?string
     {
         $choiceOptions = is_array($data) ? $data : explode(',',$data);
 
@@ -592,7 +610,7 @@ abstract class Fields extends BaseField
      * @param $value
      * @throws ValidationFailedException
      */
-    public function checkMinDate($minDate, $value): void
+    protected function checkMinDate($minDate, $value): void
     {
         if(strtotime($minDate) < strtotime($value)) {
             throw new ValidationFailedException(sprintf(self::minValueErrorMessage, $minDate));
@@ -604,7 +622,7 @@ abstract class Fields extends BaseField
      * @param $value
      * @throws ValidationFailedException
      */
-    public function checkMaxDate($maxDate, $value): void
+    protected function checkMaxDate($maxDate, $value): void
     {
         if(strtotime($value) > strtotime($maxDate)) {
             throw new ValidationFailedException(sprintf(self::maxValueErrorMessage, $maxDate));

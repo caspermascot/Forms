@@ -90,8 +90,12 @@ class DateField extends Fields
                 if(empty(strtotime($this->data))){
                     throw new ValidationFailedException('Invalid date Value');
                 }
-                $this->checkMinDate($this->minValue, $this->data);
-                $this->checkMaxDate($this->maxValue, $this->data);
+                if(isset($this->minValue)){
+                    $this->checkMinDate($this->minValue, $this->data);
+                }
+                if(isset($this->maxValue)){
+                    $this->checkMaxDate($this->maxValue, $this->data);
+                }
                 $this->setCleanedData((string) $this->data);
             }
 
@@ -100,6 +104,7 @@ class DateField extends Fields
 
         }catch (ValidationFailedException $validationFailedException){
             $this->isValid = false;
+            $this->setValidationErrorMessage($validationFailedException->getMessage());
             return $validationFailedException->getMessage();
         }
     }

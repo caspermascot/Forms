@@ -116,14 +116,13 @@ class Choices extends Fields
     public function validate(): ?string
     {
         try {
-//            $this->checkEmpty($this->data);
             $this->checkRequired($this->data);
             $this->checkNull($this->data);
             $this->checkBlank($this->data);
 
-            if(!empty($this->data)){
+            if(isset($this->data)){
                 $this->validateChoiceOptions($this->choices, $this->data);
-                $this->setCleanedData((string) $this->data);
+                $this->setCleanedData( $this->data);
             }
 
             $this->isValid = true;
@@ -131,6 +130,7 @@ class Choices extends Fields
 
         }catch (ValidationFailedException $validationFailedException){
             $this->isValid = false;
+            $this->setValidationErrorMessage($validationFailedException->getMessage());
             return $validationFailedException->getMessage();
         }
     }

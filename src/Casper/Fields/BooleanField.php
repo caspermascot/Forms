@@ -8,6 +8,7 @@ use Casper\Exceptions\ValidationFailedException;
 
 class BooleanField extends CharField
 {
+    private const booleanErrorMessage = 'Invalid boolean value';
 
     public function validate(): ?string
     {
@@ -17,16 +18,16 @@ class BooleanField extends CharField
             $this->checkBlank($this->data);
 
             $options = [
-                true => true,
-                false => false,
+                'true' => true,
+                'false' => false,
                 'yes' => true,
                 'no' => false,
                 'ok' => true,
                 '1' => true,
                 '0' => false
             ];
-            if(!array_key_exists((string)$this->data, $options)){
-                throw new ValidationFailedException('Invalid boolean value');
+            if(!array_key_exists((string)$this->data, $options) && !is_bool($this->data)){
+                throw new ValidationFailedException(self::booleanErrorMessage);
             }
 
             $this->isValid = true;
@@ -35,7 +36,8 @@ class BooleanField extends CharField
 
         }catch (ValidationFailedException $validationFailedException){
                 $this->isValid = false;
-                return $validationFailedException->getMessage();
+            $this->setValidationErrorMessage($validationFailedException->getMessage());
+            return $validationFailedException->getMessage();
         }
     }
 }

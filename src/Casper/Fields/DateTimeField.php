@@ -30,6 +30,7 @@ class DateTimeField extends DateField
 
     public function setCleanedData($data): Fields
     {
-        return parent::setCleanedData(date('c', strtotime($this->data)));
+        $this->cleanedData = date('Y-m-d H:i:s', strtotime($data));
+        return $this;
     }
 }

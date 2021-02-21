@@ -4,22 +4,16 @@
 namespace FormTests;
 
 
-use Casper\Exceptions\FieldCreateFailedException;
 use Casper\Exceptions\FormNotValidatedException;
-use Casper\Exceptions\InvalidMethodException;
-use Casper\Exceptions\InvalidUrlException;
 use Exception;
 
 class FormFormTest extends FormTestCase
 {
     /**
-     * @throws FieldCreateFailedException
      * @throws FormNotValidatedException
-     * @throws InvalidMethodException
-     * @throws InvalidUrlException
      * @throws Exception
      */
-    public function testLoginForm()
+    public function testLoginForm(): void
     {
         $loginForm = new TestLoginForm();
         $testData = [

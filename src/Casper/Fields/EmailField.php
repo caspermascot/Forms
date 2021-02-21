@@ -44,6 +44,7 @@ class EmailField extends Fields
 
         }catch (ValidationFailedException $validationFailedException){
             $this->isValid = false;
+            $this->setValidationErrorMessage($validationFailedException->getMessage());
             return $validationFailedException->getMessage();
         }
     }

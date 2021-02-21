@@ -113,8 +113,10 @@ class IntegerField extends Fields
             $this->checkNull($this->data);
             $this->checkBlank($this->data);
 
-            if(!empty($this->data)){
-
+            if(isset($this->data)){
+                if(!is_numeric($this->data)){
+                    throw new ValidationFailedException('Invalid integer');
+                }
                 if(isset($this->minValue)){
                     $this->checkMinValue($this->minValue, $this->data);
                 }
@@ -129,6 +131,7 @@ class IntegerField extends Fields
 
         }catch (ValidationFailedException $validationFailedException){
             $this->isValid = false;
+            $this->setValidationErrorMessage($validationFailedException->getMessage());
             return $validationFailedException->getMessage();
         }
     }

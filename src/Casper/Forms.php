@@ -611,6 +611,14 @@ abstract class Forms
     }
 
     /**
+     * @return ChoiceField
+     */
+    public function selectField(): ChoiceField
+    {
+        return new ChoiceField();
+    }
+
+    /**
      * @return SlugField
      */
     public function slugField(): SlugField

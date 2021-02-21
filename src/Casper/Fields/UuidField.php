@@ -31,6 +31,7 @@ class UuidField extends CharField
 
         }catch (ValidationFailedException $validationFailedException){
             $this->isValid = false;
+            $this->setValidationErrorMessage($validationFailedException->getMessage());
             return $validationFailedException->getMessage();
         }
     }

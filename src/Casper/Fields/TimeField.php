@@ -47,8 +47,12 @@ class TimeField extends DateField
                 if (!preg_match(self::timeRegex, $this->data)) {
                     throw new ValidationFailedException(self::invalidTimeErrorMessage);
                 }
-                $this->checkMinDate($this->minValue, $this->data);
-                $this->checkMaxDate($this->maxValue, $this->data);
+                if(isset($this->minValue)){
+                    $this->checkMinDate($this->minValue, $this->data);
+                }
+                if(isset($this->maxValue)){
+                    $this->checkMaxDate($this->maxValue, $this->data);
+                }
                 $this->setCleanedData((string) $this->data);
             }
 
@@ -57,12 +61,18 @@ class TimeField extends DateField
 
         }catch (ValidationFailedException $validationFailedException){
             $this->isValid = false;
+            $this->setValidationErrorMessage($validationFailedException->getMessage());
             return $validationFailedException->getMessage();
         }
     }
 
+    /**
+     * @param $data
+     * @return Fields
+     */
     public function setCleanedData($data): Fields
     {
-        return parent::setCleanedData(date('H:i:s', strtotime($this->data)));
+        $this->cleanedData = date('H:i:s', strtotime($data));
+        return $this;
     }
 }
