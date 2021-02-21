@@ -193,6 +193,10 @@ abstract class Fields extends BaseField
     public function required(bool $required): self
     {
         $this->required = $required;
+        if($required){
+            $this->allowNull = true;
+            $this->allowBlank = true;
+        }
         return $this;
     }
 
