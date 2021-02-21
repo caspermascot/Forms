@@ -15,8 +15,7 @@ class HiddenField extends CharField
         $res = parent::asHtml($name);
         $label = ucfirst($this->getProperty('label'));
         $labelReplacement = "<label class='{$this->getProperty('style')}' for='{$name}'>{$label}</label> <br> ";
-        $res = str_replace("type='text'", "type='hidden'", $res);
-        $res = str_replace([$labelReplacement,'<br>'], '', $res);
+        $res = str_replace(array("type='text'", $labelReplacement, '<br>'), array("type='hidden'", '', ''), $res);
         return $res;
     }
 }

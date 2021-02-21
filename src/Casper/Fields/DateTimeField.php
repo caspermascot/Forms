@@ -27,4 +27,10 @@ class DateTimeField extends DateField
 
         return $res;
     }
+
+    public function setCleanedData($data): Fields
+    {
+        $this->cleanedData = date('Y-m-d H:i:s', strtotime($data));
+        return $this;
+    }
 }

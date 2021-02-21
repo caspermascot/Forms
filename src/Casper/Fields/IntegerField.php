@@ -4,6 +4,8 @@
 namespace Casper\Fields;
 
 
+use Casper\Exceptions\ValidationFailedException;
+
 class IntegerField extends Fields
 {
     /**
@@ -103,4 +105,43 @@ class IntegerField extends Fields
         return $res;
     }
 
+
+    public function validate(): ?string
+    {
+        try {
+            $this->checkRequired($this->data);
+            $this->checkNull($this->data);
+            $this->checkBlank($this->data);
+
+            if(isset($this->data)){
+                if(!is_numeric($this->data)){
+                    throw new ValidationFailedException('Invalid integer');
+                }
+                if(isset($this->minValue)){
+                    $this->checkMinValue($this->minValue, $this->data);
+                }
+                if(isset($this->maxValue)){
+                    $this->checkMaxValue($this->maxValue, $this->data);
+                }
+                $this->setCleanedData($this->data);
+            }
+
+            $this->isValid = true;
+            return null;
+
+        }catch (ValidationFailedException $validationFailedException){
+            $this->isValid = false;
+            $this->setValidationErrorMessage($validationFailedException->getMessage());
+            return $validationFailedException->getMessage();
+        }
+    }
+
+    /**
+     * @param $data
+     * @return IntegerField
+     */
+    public function setCleanedData($data): IntegerField
+    {
+        return parent::setCleanedData($data/1);
+    }
 }

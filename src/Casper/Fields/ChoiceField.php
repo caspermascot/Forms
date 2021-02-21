@@ -3,7 +3,6 @@
 
 namespace Casper\Fields;
 
-
 use Casper\FormUtils;
 
 class ChoiceField extends Choices
@@ -38,7 +37,7 @@ class ChoiceField extends Choices
      */
     public function asHtml(string $name=''): string
     {
-        $res = parent::getParentHtml($name);
+        $res = $this->getParentHtml($name);
         $fieldHtml = $this->getFieldHtml();
         $field = "<select {$fieldHtml} ";
         $field .= empty($this->multiple) ? '' : 'multiple="true" ';
@@ -47,18 +46,16 @@ class ChoiceField extends Choices
         $data = $this->getChoiceDefault();
         if(FormUtils::isMultiDimensional($this->choices)){
             foreach ($this->choices as $key => $choice){
-                $temp = "<option ";
-                $temp .= "value = '{$choice}' ";
-                $temp .= in_array($choice, $data) ? ' selected="true" ': '';
+                $temp = sprintf("<option value = '%s' ", $choice);
+                $temp .= in_array($choice, $data, true) ? ' selected="true" ': '';
 
                 $temp .= ">".ucfirst($key)."</option>";
                 $field.= $temp;
             }
         }else{
             foreach ($this->choices as $key => $choice){
-                $temp = "<option ";
-                $temp .= "value = '{$choice}' ";
-                $temp .= in_array($choice, $data) ? ' selected="true" ': '';
+                $temp = sprintf("<option value = '%s' ", $choice);
+                $temp .= in_array($choice, $data, true) ? ' selected="true" ': '';
 
                 $temp .= ">".ucfirst($choice)."</option>";
                 $field.= $temp;

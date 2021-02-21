@@ -4,6 +4,8 @@
 namespace Casper\Fields;
 
 
+use Casper\Exceptions\ValidationFailedException;
+
 class CharField extends Fields
 {
     /**
@@ -70,14 +72,53 @@ class CharField extends Fields
     {
         $replacement = "type='text' ";
         if(!empty($this->minLength)){
-            $replacement .= "minlength='{$this->minLength}' ";
+            $replacement .= sprintf("minlength='%d' ", $this->minLength);
         }
 
         if(!empty($this->maxLength)){
-            $replacement .= "maxlength='{$this->maxLength}' ";
+            $replacement .= sprintf("maxlength='%d' ", $this->maxLength);
         }
         $res = parent::asHtml($name);
         $res = str_replace("type='text'", $replacement, $res);
         return $res;
+    }
+
+    public function validate(): ?string
+    {
+        try {
+            $this->checkRequired($this->data);
+            $this->checkNull($this->data);
+            $this->checkBlank($this->data);
+            $this->checkEmpty($this->data);
+
+            if(!empty($this->data)){
+                $this->baseCharFieldCheck();
+                $this->setCleanedData((string) $this->data);
+            }
+
+            $this->isValid = true;
+            return null;
+
+        }catch (ValidationFailedException $validationFailedException){
+            $this->isValid = false;
+            $this->setValidationErrorMessage($validationFailedException->getMessage());
+            return $validationFailedException->getMessage();
+        }
+    }
+
+    /**
+     * @throws ValidationFailedException
+     */
+    protected function baseCharFieldCheck(): void
+    {
+        if(isset($this->regex)){
+            $this->checkRegex($this->regex, $this->data);
+        }
+        if(isset($this->minLength)){
+            $this->checkMinLength($this->minLength, $this->data);
+        }
+        if(isset($this->maxLength)){
+            $this->checkMaxLength($this->maxLength, $this->data);
+        }
     }
 }

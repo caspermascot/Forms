@@ -38,6 +38,7 @@ use Casper\Fields\TimeField;
 use Casper\Fields\UrlField;
 use Casper\Fields\UuidField;
 use Exception;
+use RuntimeException;
 
 abstract class Forms
 {
@@ -373,16 +374,20 @@ abstract class Forms
             $validationError = null;
             if($var instanceof Fields){
                 $validationError = $var->validate();
+                if(is_null($validationError)){
+                    $validationError = $var->runCustomValidation();
+                }
+
                 if(is_null($validationError) && method_exists($this, "validate_" . $key)) {
                     try{
-                        $cleanedData = call_user_func([$this, "validate_".$key], []);
+                        $cleanedData = $this->{"validate_" . $key}();
                         $var->setCleanedData($cleanedData);
                     }
                     catch (ValidationFailedException $exception){
                         $validationError = $exception->getMessage();
                     }
                     catch (Exception $exception){
-                        throw new Exception($exception->getMessage());
+                        throw new RuntimeException($exception->getMessage());
                     }
                 }
 
@@ -425,7 +430,7 @@ abstract class Forms
      * @return array|mixed|null
      * @throws FormNotValidatedException
      */
-    public function getCleanedData(string $data=null)
+    public function getCleanedData(string $data=null): ?array
     {
         if(!isset($this->validated)){
             throw new FormNotValidatedException();
@@ -604,6 +609,14 @@ abstract class Forms
     public function rangeField(): RangeField
     {
         return new RangeField();
+    }
+
+    /**
+     * @return ChoiceField
+     */
+    public function selectField(): ChoiceField
+    {
+        return new ChoiceField();
     }
 
     /**

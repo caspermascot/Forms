@@ -4,6 +4,8 @@
 namespace Casper\Fields;
 
 
+use Casper\Exceptions\ValidationFailedException;
+
 class DateField extends Fields
 {
 
@@ -75,4 +77,41 @@ class DateField extends Fields
 
         return $res;
     }
+
+    public function validate(): ?string
+    {
+        try {
+            $this->checkRequired($this->data);
+            $this->checkNull($this->data);
+            $this->checkBlank($this->data);
+            $this->checkEmpty($this->data);
+
+            if(!empty($this->data)){
+                if(empty(strtotime($this->data))){
+                    throw new ValidationFailedException('Invalid date Value');
+                }
+                if(isset($this->minValue)){
+                    $this->checkMinDate($this->minValue, $this->data);
+                }
+                if(isset($this->maxValue)){
+                    $this->checkMaxDate($this->maxValue, $this->data);
+                }
+                $this->setCleanedData((string) $this->data);
+            }
+
+            $this->isValid = true;
+            return null;
+
+        }catch (ValidationFailedException $validationFailedException){
+            $this->isValid = false;
+            $this->setValidationErrorMessage($validationFailedException->getMessage());
+            return $validationFailedException->getMessage();
+        }
+    }
+
+    public function setCleanedData($data): Fields
+    {
+        return parent::setCleanedData(date('Y-m-d', strtotime($this->data)));
+    }
+
 }
