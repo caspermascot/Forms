@@ -450,54 +450,6 @@ class Validator implements ValidatorsInterface
     }
 
     /**
-     * @param $minValue
-     * @param $data
-     * @throws ValidationFailedException
-     */
-    private function checkMinValue($minValue, $data): void
-    {
-        if(isset($minValue) && $data < $minValue) {
-            throw new ValidationFailedException("Value cannot be less than {$minValue}");
-        }
-    }
-
-    /**
-     * @param $maxValue
-     * @param $data
-     * @throws ValidationFailedException
-     */
-    private function checkMaxValue($maxValue, $data): void
-    {
-        if(isset($maxValue) && $data > $maxValue) {
-            throw new ValidationFailedException("Value cannot be greater than {$maxValue}");
-        }
-    }
-
-    /**
-     * @param $minLength
-     * @param $data
-     * @throws ValidationFailedException
-     */
-    private function checkMinLength($minLength, $data): void
-    {
-        if(isset($minLength) && strlen($data) < $minLength) {
-            throw new ValidationFailedException("Value cannot be have length less than {$minLength}");
-        }
-    }
-
-    /**
-     * @param $maxLength
-     * @param $data
-     * @throws ValidationFailedException
-     */
-    private function checkMaxLength($maxLength, $data): void
-    {
-        if(isset($maxLength) && strlen($data) > $maxLength) {
-            throw new ValidationFailedException("Value cannot be have length more than {$maxLength}");
-        }
-    }
-
-    /**
      * @param PasswordField $field
      * @return PasswordField
      * @throws ValidationFailedException

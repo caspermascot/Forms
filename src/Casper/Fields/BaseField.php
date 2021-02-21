@@ -20,6 +20,9 @@ class BaseField
      */
     protected string $name;
 
+    /**
+     * @var string|null
+     */
     protected ?string $style;
     /**
      * @param $name

@@ -14,21 +14,21 @@ class CheckBoxField extends ChoiceField
      */
     public function asHtml(string $name=''): string
     {
-        $res = parent::getParentHtml($name);
+        $res = $this->getParentHtml($name);
         $field = '';
         $data = $this->getChoiceDefault();
         $count = 0;
         if(FormUtils::isMultiDimensional($this->choices)){
             foreach ($this->choices as $key => $choice){
                 $label = ucfirst($key);
-                $field.= $this->getChoiceHtmlData($this, $data, $count, $label, $choice, $key,'checkbox', !empty($this->multiple));
-                $count+=1;
+                $field.= $this->getChoiceHtmlData($this, $data, $count, $label, $choice, 'checkbox', !empty($this->multiple));
+                ++$count;
             }
         }else{
             foreach ($this->choices as $key => $choice){
                 $label = ucfirst($choice);
-                $field.= $this->getChoiceHtmlData($this, $data, $count, $label, $choice, null,'checkbox', !empty($this->multiple));
-                $count+=1;
+                $field.= $this->getChoiceHtmlData($this, $data, $count, $label, $choice, 'checkbox', !empty($this->multiple));
+                ++$count;
             }
         }
         $res = str_replace('htmlField', $field, $res);
