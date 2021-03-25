@@ -26,6 +26,12 @@ class BooleanField extends CharField
                 '1' => true,
                 '0' => false
             ];
+
+            if($this->allowNull && empty($this->data)){
+                $this->isValid = true;
+                return null;
+            }
+
             if(!array_key_exists((string)$this->data, $options) && !is_bool($this->data)){
                 throw new ValidationFailedException(self::booleanErrorMessage);
             }
