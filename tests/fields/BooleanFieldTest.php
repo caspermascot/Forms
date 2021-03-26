@@ -32,7 +32,10 @@ class BooleanFieldTest extends FormTestCase
     public function testNullBooleanField(): void
     {
         $booleanField = new BooleanField();
-        $booleanField->required(false)->allowNull(true)->allowBlank(true)->data(null);
+        $booleanField->required(false)
+            ->allowNull(true)
+            ->allowBlank(true)
+            ->data(null);
         self::assertTrue($booleanField->getProperty('isValid'));
         self::assertEmpty($booleanField->getProperty('errorMessage'));
     }

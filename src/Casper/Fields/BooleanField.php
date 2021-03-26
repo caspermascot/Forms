@@ -27,7 +27,7 @@ class BooleanField extends CharField
                 '0' => false
             ];
 
-            if($this->allowNull && empty($this->data)){
+            if($this->allowNull && is_null($this->data)){
                 $this->isValid = true;
                 return null;
             }
