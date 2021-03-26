@@ -36,7 +36,7 @@ class Choices extends Fields
         parent::validateFieldCreate($caller);
         $name = $this->getProperty('name');
 
-        if(empty($this->choices)){
+        if(!isset($this->choices)){
             throw new FieldCreateFailedException(sprintf(self::MISSING_CHOICES_MESSAGES
                 , $name, $caller));
         }

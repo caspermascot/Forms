@@ -31,4 +31,16 @@ class DataListFieldTest extends FormTestCase
         self::assertFalse($dataListField->getProperty('isValid'));
         self::assertNotEmpty($dataListField->getProperty('errorMessage'));
     }
+
+
+    public function testDataListFieldEmptyChoices(): void
+    {
+        $dataList = 'wrong-dataList';
+        $dataListField = (new DataListField())
+            ->choices([])
+            ->allowNewContent(false);
+        $dataListField->data($dataList);
+        self::assertFalse($dataListField->getProperty('isValid'));
+        self::assertNotEmpty($dataListField->getProperty('errorMessage'));
+    }
 }
