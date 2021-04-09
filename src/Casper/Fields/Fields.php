@@ -616,7 +616,7 @@ abstract class Fields extends BaseField
      */
     protected function checkMinDate($minDate, $value): void
     {
-        if(strtotime($minDate) < strtotime($value)) {
+        if(strtotime($value) < strtotime($minDate)) {
             throw new ValidationFailedException(sprintf(self::minValueErrorMessage, $minDate));
         }
     }
