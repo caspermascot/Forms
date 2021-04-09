@@ -381,7 +381,9 @@ abstract class Forms
                 if(is_null($validationError) && method_exists($this, "validate_" . $key)) {
                     try{
                         $cleanedData = $this->{"validate_" . $key}();
-                        $var->setCleanedData($cleanedData);
+                        if(!empty($cleanedData)){
+                            $var->setCleanedData($cleanedData);
+                        }
                     }
                     catch (ValidationFailedException $exception){
                         $validationError = $exception->getMessage();
