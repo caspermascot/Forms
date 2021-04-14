@@ -5,6 +5,7 @@ namespace Casper\Fields;
 
 
 use Casper\Exceptions\ValidationFailedException;
+use Casper\FormUtils;
 use Casper\Validators\ValidatorsInterface;
 use Exception;
 
@@ -599,8 +600,9 @@ abstract class Fields extends BaseField
         $choiceOptions = is_array($data) ? $data : explode(',',$data);
 
         if(isset($choices)){
+            $setChoices =  (FormUtils::isMultiDimensional($choices))? array_keys($choices) : array_values($choices);
             foreach ($choiceOptions as $key => $value){
-                if(!in_array($value, $choices, true)){
+                if(!in_array($value, $setChoices, true)){
                     throw new ValidationFailedException(sprintf(self::invalidChoiceErrorMessage,$value, implode(', ',$choices)));
                 }
             }
