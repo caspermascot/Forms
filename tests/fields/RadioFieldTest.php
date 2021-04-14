@@ -27,4 +27,17 @@ class RadioFieldTest extends FormTestCase
         self::assertFalse($radioField->getProperty('isValid'));
         self::assertNotEmpty($radioField->getProperty('errorMessage'));
     }
+
+    public function testRadioFieldAssociative(): void
+    {
+        $radio = 'wrong';
+        $radioField = (new RadioField())->choices([
+            'a'=>'bird',
+            'b'=>'dog',
+            'c'=>'cat'
+        ]);
+        $radioField->data($radio);
+        self::assertFalse($radioField->getProperty('isValid'));
+        self::assertNotEmpty($radioField->getProperty('errorMessage'));
+    }
 }
