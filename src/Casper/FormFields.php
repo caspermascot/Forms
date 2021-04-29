@@ -18,6 +18,7 @@ use Casper\Fields\FloatField;
 use Casper\Fields\HiddenField;
 use Casper\Fields\ImageField;
 use Casper\Fields\IntegerField;
+use Casper\Fields\ListField;
 use Casper\Fields\PasswordField;
 use Casper\Fields\PhoneField;
 use Casper\Fields\RadioField;
@@ -230,5 +231,10 @@ class FormFields implements FormFieldsInterface
     public function urlField(): UrlField
     {
         return new UrlField();
+    }
+
+    public function listField(): ListField
+    {
+        return new ListField();
     }
 }
