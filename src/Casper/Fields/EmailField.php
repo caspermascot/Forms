@@ -29,11 +29,10 @@ class EmailField extends Fields
             $this->checkEmpty($this->data);
 
             if(!empty($this->data)){
-
                 if(isset($this->regex)){
                     $this->checkRegex($this->regex, $this->data);
                 }
-                if (!filter_var($this->data, FILTER_VALIDATE_EMAIL)) {
+                if (!filter_var($this->data, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE)) {
                     throw new ValidationFailedException(self::emailErrorMessage);
                 }
                 $this->setCleanedData((string) $this->data);
