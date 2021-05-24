@@ -19,6 +19,16 @@ class EmailFieldTest extends FormTestCase
         self::assertEmpty($emailField->getProperty('errorMessage'));
     }
 
+    public function testEmailFieldWithWeirdCharacterData(): void
+    {
+        $email = 'ääp.järvi@veli.fi';
+        $emailField = new EmailField();
+        $emailField->data($email);
+        self::assertTrue($emailField->getProperty('isValid'),'Email field not valid');
+        self::assertEquals($email, $emailField->getProperty('cleanedData'));
+        self::assertEmpty($emailField->getProperty('errorMessage'));
+    }
+
     public function testEmailFieldInCorrectData(): void
     {
         $email = 'wrong-email';
