@@ -116,6 +116,11 @@ class TextField extends Fields
             $this->checkEmpty($this->data);
 
             if(!empty($this->data)){
+                if(is_array($this->data)){
+                    $this->data = json_encode($this->data);
+                }else{
+                    $this->data = (string)$this->data;
+                }
                 if(isset($this->regex)){
                     $this->checkRegex($this->regex, $this->data);
                 }
@@ -125,7 +130,8 @@ class TextField extends Fields
                 if(isset($this->maxLength)){
                     $this->checkMaxLength($this->maxLength, $this->data);
                 }
-                $this->setCleanedData((string) $this->data);
+
+                $this->setCleanedData( $this->data);
             }
 
             $this->isValid = true;
